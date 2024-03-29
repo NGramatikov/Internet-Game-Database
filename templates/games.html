@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+This is the generic Game view page
+
+Available video games:
+<ul>
+{% for game in video_games %}
+    <li>{{ game }}</li>
+{% endfor %}
+</ul><br>
+
+Available non-video games:
+<ul>
+{% for game in non_video_games %}
+    <li>{{ game }}</li>
+{% endfor %}
+</ul>
+
+</body>
+</html>

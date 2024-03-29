@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
-    <data-source source="LOCAL" name="postgres@127.0.0.1" uuid="7a1ecfc3-9798-4a75-b633-cdc3e10df417">
+    <data-source source="LOCAL" name="postgres@localhost" uuid="00c10b51-fb28-4c04-90cd-cef89cc0dae2">
       <driver-ref>postgresql</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>org.postgresql.Driver</jdbc-driver>
-      <jdbc-url>jdbc:postgresql://127.0.0.1:5432/postgres</jdbc-url>
+      <jdbc-url>jdbc:postgresql://localhost:5432/postgres</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
-    <data-source source="LOCAL" name="Django default" uuid="f006c5a8-df84-4d49-8b23-569bd937b227">
+    <data-source source="LOCAL" name="Django default" uuid="8214e48e-050a-4f4a-bcc3-9226f8cccc3d">
       <driver-ref>postgresql</driver-ref>
       <synchronize>true</synchronize>
       <imported>true</imported>

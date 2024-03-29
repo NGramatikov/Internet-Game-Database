@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+This is the home page.
+Available links are:
+<ul>
+    <li><a href="{% url 'home' %}">Home</a></li>
+    <li><a href="{% url 'games' %}">games</a></li>
+    <li><a href="{% url 'create_game' %}">create_game</a></li>
+    <li><a href="{% url 'read_game' pk=1 %}">read_game</a></li>
+    <li><a href="{% url 'update_game' pk=1 %}">update_game</a></li>
+    <li><a href="{% url 'curated_lists' %}">curated_lists</a></li>
+    <li><a href="{% url 'reviews' %}">reviews</a></li>
+    <li><a href="{% url 'create_list' %}">create_list</a></li>
+    <li><a href="{% url 'read_list' pk=1 %}">read_list</a></li>
+    <li><a href="{% url 'update_list' pk=1 %}">update_list</a></li>
+    <li><a href="{% url 'create_review' %}">create_review</a></li>
+    <li><a href="{% url 'read_review' pk=1 %}">read_review</a></li>
+    <li><a href="{% url 'update_review' pk=1 %}">update_review</a></li>
+    <li><a href="{% url 'sign_in' %}">sign_in</a></li>
+    <li><a href="{% url 'create_user' %}">create_user</a></li>
+    <li><a href="{% url 'read_user' pk=1 %}">read_user</a></li>
+    <li><a href="{% url 'update_user' pk=1 %}">update_user</a></li>
+</ul>
+</body>
+</html>
