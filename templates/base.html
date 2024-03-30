@@ -2,9 +2,30 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>{% block title %}My Website{% endblock %}</title>
 </head>
 <body>
-This is the daddy html from which all other htmls will inherit
+
+<header>
+    <nav>
+        <ul>
+            {% if request.user.is_authenticated %}
+                <p>{{ request.user.username }}</p>
+{#                <li><a href="{% url 'update_user' %}">Edit Profile</a></li>#}
+                <li><a href="{% url 'sign_out' %}">Sign Out</a></li>
+            {% else %}
+                <li><a href="{% url 'create_user' %}">Sign Up</a></li>
+                <li><a href="{% url 'sign_in' %}">Log In</a></li>
+            {% endif %}
+        </ul>
+    </nav>
+end of header ***************************************<br><br>
+</header>
+
+<main>
+    {% block content %}
+    {% endblock %}
+</main>
+
 </body>
 </html>

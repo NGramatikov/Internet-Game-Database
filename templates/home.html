@@ -1,18 +1,18 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends 'base.html' %}
+
+{% block title %}Page Title{% endblock %}
+
+{% block content %}
 This is the home page.
 Available links are:
 <ul>
     <li><a href="{% url 'home' %}">Home</a></li>
     <li><a href="{% url 'games' %}">games</a></li>
+    <li><a href="{% url 'reviews' %}">reviews</a></li>
+    <li><a href="{% url 'curated_lists' %}">curated lists</a></li>
     <li><a href="{% url 'create_game' %}">create_game</a></li>
-    <li><a href="{% url 'read_game' pk=1 %}">read_game</a></li>
-    <li><a href="{% url 'update_game' pk=1 %}">update_game</a></li>
+    <li><a href="{% url 'read_game' slug='max-payne-14' %}">read_game</a></li>
+    <li><a href="{% url 'update_game' slug='cod2-15' %}">update_game</a></li>
     <li><a href="{% url 'curated_lists' %}">curated_lists</a></li>
     <li><a href="{% url 'reviews' %}">reviews</a></li>
     <li><a href="{% url 'create_list' %}">create_list</a></li>
@@ -26,5 +26,5 @@ Available links are:
     <li><a href="{% url 'read_user' pk=1 %}">read_user</a></li>
     <li><a href="{% url 'update_user' pk=1 %}">update_user</a></li>
 </ul>
-</body>
-</html>
+    
+{% endblock %}

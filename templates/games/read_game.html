@@ -1,10 +1,66 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
-This is the Read Game page
-</body>
-</html>
+{% extends 'base.html' %}
+
+{% block title %}Page Title{% endblock %}
+
+{% block content %}
+This is the Read Game page<br><br>
+These are the common fields:<br>
+
+Name: {{ game.name }}<br>
+
+{% if game.description %}
+Description: {{ game.description }}<br>
+{% endif %}
+
+{% if game.genre %}
+Genre: {{ game.genre }}<br>
+{% endif %}
+
+Rating: {{ game.age_range }}+<br>
+
+{% if game.cover %}
+Cover: {{ game.cover }}<br>
+{% endif %}
+<br>
+
+These are the fields, specific to the game type:<br>
+{% if game.type == "Video Games" %}
+    Release Year: {{ game.release_year }}<br>
+    
+    {% if game.trailer %}
+        Trailer: {{ game.trailer }}<br>
+    {% endif %}
+        
+    {% if game.gameplay %}
+        Gameplay: {{ game.gameplay }}<br>
+    {% endif %}
+    
+    Developer: {{ game.developer }}<br>
+    
+    Publisher: {{ game.publisher }}<br>
+    
+    {% if game.system_requirements %}
+        System Requirements: {{ game.system_requirements }}<br>
+    {% endif %}
+
+{% else %}
+    Players: {{ game.players }}<br>
+    
+    Rules: {{ game.rules }}<br>
+    
+    {% if game.setup_time%}
+        Setup Time: {{ game.setup_time }}<br>
+    {% endif %}
+    
+    {% if game.playtime %}
+        Playtime: {{ game.playtime }}<br>
+    {% endif %}
+    
+    Chance: {{ game.chance }}<br>
+    
+    {% if game.skills %}
+        Skills: {{ game.skills }}<br>
+    {% endif %}
+    
+{% endif %}
+{% endblock %}

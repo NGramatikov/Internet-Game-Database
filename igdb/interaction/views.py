@@ -1,6 +1,7 @@
 from django.shortcuts import render
-from django.views.generic import View
+from django.views.generic import View, CreateView
 
+from igdb.interaction.forms import CreateCuratedListForm
 from igdb.interaction.models import Review, CuratedList
 
 
@@ -22,9 +23,14 @@ class ReviewsView(View):
         return render(request, context=context, template_name="reviews.html")
 
 
-class CreateListView(View):
-    def get(self, request):
-        return render(request, template_name="interaction\\create_list.html")
+class CreateListView(CreateView):
+    model = CuratedList
+    form_class = CreateCuratedListForm
+    template_name = "interaction\\create_list.html"
+
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        return super().form_valid(form)
 
 
 class ReadListView(View):

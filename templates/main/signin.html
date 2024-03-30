@@ -1,10 +1,14 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends 'base.html' %}
+
+{% block title %}Page Title{% endblock %}
+
+{% block content %}
 This is the sign-in page.
-</body>
-</html>
+<br>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Login</button>
+    <a href="{% url 'create_user' %}">Dont have Account Create</a>
+</form>    
+{% endblock %}

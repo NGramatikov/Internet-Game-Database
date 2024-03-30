@@ -3,6 +3,7 @@ from datetime import datetime
 
 import django
 from django.core.exceptions import ValidationError
+from django.shortcuts import get_object_or_404
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "igdb.settings")
 django.setup()
@@ -103,3 +104,5 @@ game3 = VideoGame.objects.get(name="Max Payne 2: The Fall of Max Payne")
 # user2 = User.objects.get(id="7")
 # profile2 = Profile(user=user2, birthdate="2011-03-27")
 # profile2.save()
+video_game = get_object_or_404(VideoGame, slug="cod2-15")
+print(type(video_game))

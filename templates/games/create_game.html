@@ -1,16 +1,38 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+{% extends 'base.html' %}
+
+{% block title %}Page Title{% endblock %}
+
+{% block content %}
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Choose Form</title>
+    <script>
+        function showSelectedForm() {
+            var selectedValue = document.getElementById('form_selector').value;
+            document.getElementById('video_game_form').style.display = (selectedValue === 'video_game') ? 'block' : 'none';
+            document.getElementById('non_video_game_form').style.display = (selectedValue === 'non_video_game') ? 'block' : 'none';
+        }
+
+        // Call the showSelectedForm function when the page loads
+        window.onload = showSelectedForm;
+    </script>
 </head>
 <body>
-This is the Create Game page
+    <select id="form_selector" onchange="showSelectedForm()">
+        <option value="video_game">Video Game Form</option>
+        <option value="non_video_game">Non-Video Game Form</option>
+    </select>
 
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Create Game</button>
-</form>
-</body>
-</html>
+    <form method="post" id="video_game_form" style="display: none;">
+        <!-- Video Game Form Content -->
+        {% csrf_token %}
+        {{ video_game_form.as_p }}
+        <button type="submit">Submit Video Game</button>
+    </form>
+
+    <form method="post" id="non_video_game_form" style="display: none;">
+        <!-- Non-Video Game Form Content -->
+        {% csrf_token %}
+        {{ non_video_game_form.as_p }}
+        <button type="submit">Submit Non-Video Game</button>
+    </form>
+{% endblock %}

@@ -1,25 +1,35 @@
 from django import forms
 
-from igdb.games.models import Game, GAME_TYPES, VideoGame, NonVideoGame
+from igdb.games.models import VideoGame, NonVideoGame
 
 
-# We need to check what type of game the user chooses so we can use the appropriate sub-class.
-class GameForm(forms.ModelForm):
+# We need to check what type of game the user chooses so we can use the appropriate form. This is done via JavaScript in
+# the template games\\create
+class CreateVideoGameForm(forms.ModelForm):
     class Meta:
         model = VideoGame
-        fields = ["name", "type", "age_range"]
+        fields = ["name", "age_range", "release_year", "developer", "publisher"]
+
+
+class CreateNonVideoGameForm(forms.ModelForm):
+    class Meta:
+        model = NonVideoGame
+        fields = ["name", "type", "age_range", "players", "rules", "chance"]
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields["type"] = forms.ChoiceField(choices=GAME_TYPES)
+        self.fields["type"] = forms.ChoiceField(choices=(("Party Games", "Party Games"),
+                                                         ("Tabletop Games", "Tabletop Games"),
+                                                         ("Other Games", "Other Games"),))
 
-    def save(self, commit=True):
-        if self.cleaned_data["type"] == "Video Games":
-            instance = VideoGame(name=self.cleaned_data["name"], type=self.cleaned_data["type"],
-                                 age_range=self.cleaned_data["age_range"])
-        else:
-            instance = NonVideoGame(name=self.cleaned_data["name"], type=self.cleaned_data["type"],
-                                    age_range=self.cleaned_data["age_range"])
-        if commit:
-            instance.save()
-        return instance
+
+class UpdateVideoGameForm(forms.ModelForm):
+    class Meta:
+        model = VideoGame
+        exclude = ["name", "slug", "type"]
+
+
+class UpdateNonVideoGameForm(forms.ModelForm):
+    class Meta:
+        model = NonVideoGame
+        exclude = ["name", "slug", "type"]

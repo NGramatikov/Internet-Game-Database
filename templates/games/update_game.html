@@ -1,10 +1,15 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
-This is the update or delete game page
-</body>
-</html>
+{% extends 'base.html' %}
+
+{% block title %}Page Title{% endblock %}
+
+{% block content %}
+This is the update and delete game page
+
+<form method="post" id="update_game_form">
+    {% csrf_token %}
+    {{ game_form.as_p }}
+    <input type="hidden" name="game_type" value="{{ game_instance.get_game_type }}">
+    <button type="submit">Update Game</button>
+    <button type="submit" name="action" value="delete" id="deleteButton">Delete Game</button>
+</form>
+{% endblock %}

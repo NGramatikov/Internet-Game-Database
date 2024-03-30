@@ -27,13 +27,16 @@ CHANCE = (("Low", "Low"),
 user = get_user_model()
 
 
+# We create the parent class for all games. If we don't set the default type to Video Games we will get an
+# {'type': ['This field cannot be blank.']}" error when trying to create a VideoGame object. It didn't matter if we set
+# the type to initial="Video Games" in the form.
 class Game(models.Model):
     class Meta:
         abstract = True
 
     name = models.CharField(max_length=100, unique=True, null=False, blank=False, validators=[validate_name])
     description = models.TextField(blank=True, null=True, validators=[MinLengthValidator(20)])
-    type = models.CharField(max_length=50, choices=GAME_TYPES, null=False, blank=False)
+    type = models.CharField(max_length=50, choices=GAME_TYPES, null=False, blank=False, default="Video Games")
     genre = models.CharField(max_length=50, blank=True, null=True)
     age_range = models.PositiveSmallIntegerField(choices=AGE_RANGE, null=False, blank=False)
     cover = models.ImageField(blank=True, null=True)
