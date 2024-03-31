@@ -12,7 +12,7 @@ from igdb.main.models import Profile
 from django.contrib.auth.models import User
 from igdb.games.models import VideoGame, NonVideoGame
 from django.contrib.contenttypes.models import ContentType
-from igdb.interaction.models import CuratedList, ListItem, Like, Comment, Review, Rating
+from igdb.interaction.models import CuratedList, Like, Comment, Review, Rating
 
 # def_user = User(username="user1", password="pass1")
 # def_user.save()
@@ -39,10 +39,10 @@ curated_list1 = CuratedList.objects.all().first()
 # list_item2.save()
 
 ''' Accessing the list of games in a CuratedList.'''
-curated_list1_items = ListItem.objects.filter(curated_list=curated_list1)
+# curated_list1_items = ListItem.objects.filter(curated_list=curated_list1)
 
 ''' If we want to access the original object: '''
-curated_list_item = curated_list1_items.get(id=1).content_object
+# curated_list_item = curated_list1_items.get(id=1).content_object
 
 ''' To create a Like once again we need to get the content type and object id of the object we want to like: '''
 # like = Like(user=user.user, content_type=ContentType.objects.get_for_model(VideoGame), object_id=video_game1.id)
@@ -71,8 +71,8 @@ comment_object = non_video_game1.comments.get(id=comment.id)
 #                 review="This is a review")
 # review.save()
 review = Review.objects.all().first()
-game_object4 = review.content_object
-review_object = video_game1.reviews.get(id=review.id)
+# game_object4 = review.content_object
+# review_object = video_game1.reviews.get(id=review.id)
 
 ''' And now, just because, let's try to like and comment on a CuratedList: '''
 # like2 = Like(user=user.user, content_type=ContentType.objects.get_for_model(CuratedList), object_id=curated_list1.id)
@@ -104,5 +104,6 @@ game3 = VideoGame.objects.get(name="Max Payne 2: The Fall of Max Payne")
 # user2 = User.objects.get(id="7")
 # profile2 = Profile(user=user2, birthdate="2011-03-27")
 # profile2.save()
-video_game = get_object_or_404(VideoGame, slug="cod2-15")
-print(type(video_game))
+print(VideoGame.objects.get(id=14).reviews.all())
+print(NonVideoGame.objects.get(slug="cops-and-r-4").reviews.all())
+print(CuratedList.objects.get(id=1).__dict__)

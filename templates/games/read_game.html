@@ -4,6 +4,9 @@
 
 {% block content %}
 This is the Read Game page<br><br>
+    
+<a href="{% url 'create_review' slug=game.slug %}">Create Review</a><br>
+
 These are the common fields:<br>
 
 Name: {{ game.name }}<br>

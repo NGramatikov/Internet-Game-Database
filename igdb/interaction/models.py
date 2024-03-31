@@ -3,6 +3,7 @@ from django.contrib.auth import get_user_model
 from django.core.validators import MinLengthValidator
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
+from django.template.defaultfilters import slugify
 
 from igdb.interaction.validators import validate_title
 
@@ -54,8 +55,21 @@ class Commentable(models.Model):
 
 
 class Review(GenericInteraction):
+    title = models.CharField(max_length=100, null=False, blank=False, unique=True, validators=[MinLengthValidator(10)])
     content = models.TextField(null=False, blank=False, validators=[MinLengthValidator(20)])
     updated_at = models.DateTimeField(auto_now=True)
+    slug = models.SlugField(unique=True, blank=True)
+
+    def save(self, *args, **kwargs):
+        self.full_clean()
+        super().save(*args, **kwargs)
+        if not self.slug:
+            self.slug = slugify(f"{self.title[:10]}-{self.pk}")
+            super().save(*args, **kwargs)
+
+    def __str__(self):
+        return (f"Review {self.title} was created by {self.user.username} on {self.created_at} and updated on "
+                f"{self.updated_at}.")
 
 
 class Reviewable(models.Model):
@@ -69,19 +83,27 @@ class CuratedList(Likeable, Commentable, models.Model):
     user = models.ForeignKey(user, on_delete=models.DO_NOTHING)
     title = models.CharField(max_length=100, null=False, blank=False, unique=True, validators=[validate_title])
     description = models.TextField(blank=True, null=True)
+    items = models.ManyToManyField(to="games.VideoGame")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    slug = models.SlugField(unique=True, blank=True)
 
     def save(self, *args, **kwargs):
         self.full_clean()
         super().save(*args, **kwargs)
-
-
-class ListItem(models.Model):
-    curated_list = models.ForeignKey(CuratedList, on_delete=models.DO_NOTHING)
-    content_type = models.ForeignKey(ContentType, on_delete=models.DO_NOTHING)
-    object_id = models.PositiveIntegerField()
-    content_object = GenericForeignKey('content_type', 'object_id')
+        if not self.slug:
+            self.slug = slugify(f"{self.title[:10]}-{self.pk}")
+            super().save(*args, **kwargs)
 
     def __str__(self):
-        return f'{self.curated_list.title} - {self.content_object}'
+        return f"{self.title} list was created by {self.user.username}"
+
+
+# class ListItem(models.Model):
+#     curated_list = models.ForeignKey(CuratedList, on_delete=models.CASCADE)
+#     content_type = models.ForeignKey(ContentType, on_delete=models.DO_NOTHING)
+#     object_id = models.PositiveIntegerField()
+#     content_object = GenericForeignKey('content_type', 'object_id')
+#
+#     def __str__(self):
+#         return f'{self.curated_list.title} - {self.content_object}'
