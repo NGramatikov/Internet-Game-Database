@@ -4,12 +4,11 @@
 
 {% block content %}
 This is the Read Game page<br><br>
-    
-<a href="{% url 'create_review' slug=game.slug %}">Create Review</a><br>
 
 These are the common fields:<br>
 
 Name: {{ game.name }}<br>
+Added by: {{ game.user.username }}<br>
 
 {% if game.description %}
 Description: {{ game.description }}<br>
@@ -66,4 +65,21 @@ These are the fields, specific to the game type:<br>
     {% endif %}
     
 {% endif %}
+<br>
+    
+
+    
+
+<button id="like_button">Like</button>
+<button id="rate_button">Rate</button>
+<button id="comment_button">Comment</button>
+<button id="review_button" onclick="window.location.href='{% url 'create_review' slug=game.slug %}';">Review</button><br>
+
+Likes: {{ game.likes.all | length }}<br>
+Ratings: {{ game.ratings.all }}<br>
+Comments: {{ game.comments.all }}<br>
+Reviews: {{ game.reviews.all }}<br>
+    
+    
 {% endblock %}
+

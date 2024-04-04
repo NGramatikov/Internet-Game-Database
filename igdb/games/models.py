@@ -24,7 +24,7 @@ CHANCE = (("Low", "Low"),
           ("High", "High"),
           ("Not applicable", "Not applicable"),)
 
-user = get_user_model()
+user_model = get_user_model()
 
 
 # We create the parent class for all games. If we don't set the default type to Video Games we will get an
@@ -34,6 +34,7 @@ class Game(models.Model):
     class Meta:
         abstract = True
 
+    user = models.ForeignKey(to=user_model, on_delete=models.DO_NOTHING, null=False, blank=False)
     name = models.CharField(max_length=100, unique=True, null=False, blank=False, validators=[validate_name])
     description = models.TextField(blank=True, null=True, validators=[MinLengthValidator(20)])
     type = models.CharField(max_length=50, choices=GAME_TYPES, null=False, blank=False, default="Video Games")

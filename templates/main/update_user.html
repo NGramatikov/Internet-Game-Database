@@ -3,5 +3,13 @@
 {% block title %}Page Title{% endblock %}
 
 {% block content %}
-This is the update profile and delete profile page
+This is the update profile and delete profile page<br>
+    
+<form method="post" id="update_user_form">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Update</button>
+    <button type="submit" name="action" value="delete" id="deleteButton">Delete</button>
+</form>
+    
 {% endblock %}

@@ -68,8 +68,7 @@ class Review(GenericInteraction):
             super().save(*args, **kwargs)
 
     def __str__(self):
-        return (f"Review {self.title} was created by {self.user.username} on {self.created_at} and updated on "
-                f"{self.updated_at}.")
+        return f"Review {self.title} was created by {self.user.username} on {self.created_at}"
 
 
 class Reviewable(models.Model):
@@ -78,9 +77,8 @@ class Reviewable(models.Model):
     reviews = GenericRelation(Review)
 
 
-# If we try to change the order of inheritance we will get a circular import error when migrating
-class CuratedList(Likeable, Commentable, models.Model):
-    user = models.ForeignKey(user, on_delete=models.DO_NOTHING)
+class CuratedList(models.Model):
+    user = models.ForeignKey(to=user, on_delete=models.DO_NOTHING)
     title = models.CharField(max_length=100, null=False, blank=False, unique=True, validators=[validate_title])
     description = models.TextField(blank=True, null=True)
     items = models.ManyToManyField(to="games.VideoGame")

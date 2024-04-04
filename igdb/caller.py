@@ -2,6 +2,7 @@ import os
 from datetime import datetime
 
 import django
+from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from django.shortcuts import get_object_or_404
 
@@ -10,9 +11,10 @@ django.setup()
 
 from igdb.main.models import Profile
 from django.contrib.auth.models import User
-from igdb.games.models import VideoGame, NonVideoGame
+from igdb.games.models import VideoGame, NonVideoGame, Game
 from django.contrib.contenttypes.models import ContentType
-from igdb.interaction.models import CuratedList, Like, Comment, Review, Rating
+from igdb.interaction.models import CuratedList, Like, Comment, Review, Rating, GenericInteraction, Likeable, Rateable, \
+    Commentable, Reviewable
 
 # def_user = User(username="user1", password="pass1")
 # def_user.save()
@@ -47,30 +49,30 @@ curated_list1 = CuratedList.objects.all().first()
 ''' To create a Like once again we need to get the content type and object id of the object we want to like: '''
 # like = Like(user=user.user, content_type=ContentType.objects.get_for_model(VideoGame), object_id=video_game1.id)
 # like.save()
-like = Like.objects.all().first()
+# like = Like.objects.all().first()
 ''' After that we can access both the liked object through the like and vice versa: '''
-game_object1 = like.content_object
-like_object = video_game1.likes.get(id=like.id)
+# game_object1 = like.content_object
+# like_object = video_game1.likes.get(id=like.id)
 
 ''' Hopefully the same goes for the Rate, Comment and Review classes... '''
 # rating = Rating(user=user.user, content_type=ContentType.objects.get_for_model(VideoGame), object_id=video_game1.id,
 #                 rating=10)
 # rating.save()
-rating = Rating.objects.all().first()
-game_object2 = rating.content_object
-rating_object = video_game1.ratings.get(id=rating.id)
+# rating = Rating.objects.all().first()
+# game_object2 = rating.content_object
+# rating_object = video_game1.ratings.get(id=rating.id)
 
 # comment = Comment(user=user.user, content_type=ContentType.objects.get_for_model(NonVideoGame),
 #                   object_id=non_video_game1.id, comment="This is a comment")
 # comment.save()
-comment = Comment.objects.all().first()
-game_object3 = comment.content_object
-comment_object = non_video_game1.comments.get(id=comment.id)
+# comment = Comment.objects.all().first()
+# game_object3 = comment.content_object
+# comment_object = non_video_game1.comments.get(id=comment.id)
 
 # review = Review(user=user.user, content_type=ContentType.objects.get_for_model(VideoGame), object_id=video_game1.id,
 #                 review="This is a review")
 # review.save()
-review = Review.objects.all().first()
+# review = Review.objects.all().first()
 # game_object4 = review.content_object
 # review_object = video_game1.reviews.get(id=review.id)
 
@@ -96,7 +98,7 @@ TODO: Make sure a user can't like an object more than once.
 # game3 = VideoGame(name="Max Payne 2: The Fall of Max Payne", type="Video Games", age_range=18, release_year=2003,
 #                   developer="Remedy", publisher="Rockstar")
 # game3.save()
-game3 = VideoGame.objects.get(name="Max Payne 2: The Fall of Max Payne")
+# game3 = VideoGame.objects.get(name="Max Payne 2: The Fall of Max Payne")
 # print(game3.__str__())
 # game4 = VideoGame(name="CoD2", type="Video Games", age_range=16, release_year=2005, developer="Activision",
 #                   publisher="Activision")
@@ -104,6 +106,27 @@ game3 = VideoGame.objects.get(name="Max Payne 2: The Fall of Max Payne")
 # user2 = User.objects.get(id="7")
 # profile2 = Profile(user=user2, birthdate="2011-03-27")
 # profile2.save()
-print(VideoGame.objects.get(id=14).reviews.all())
-print(NonVideoGame.objects.get(slug="cops-and-r-4").reviews.all())
-print(CuratedList.objects.get(id=1).__dict__)
+# print(VideoGame.objects.first().reviews.all())
+# ContentType.objects.get_for_model
+
+content_types = []
+all_models = [Game, VideoGame, NonVideoGame, GenericInteraction, Like, Likeable, Rating, Rateable, Comment, Commentable,
+              Review, Reviewable, CuratedList]
+
+inter_models = [VideoGame, NonVideoGame]
+for model in inter_models:
+    content_types.append(ContentType.objects.get_for_model(model))
+# print(content_types)
+
+
+def get_content_object(slug):
+    for content_type in content_types:
+        if content_type.objects.get(slug=slug):
+            obj = content_type.objects.get(slug=slug)
+            return content_type, obj.id
+    else:
+        print("Error! Game not found!")
+
+
+user5 = User.objects.get(id=5)
+print(user5.profile)

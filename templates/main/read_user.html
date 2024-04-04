@@ -3,5 +3,35 @@
 {% block title %}Page Title{% endblock %}
 
 {% block content %}
-This is the profile page
+This is the profile page<br>
+The profile {{ user.user.username }} was created on {{ user.user.date_joined }}<br>
+
+User: {{ user.user.username }}<br>
+Email: {{ user.user.email }}<br>
+Joined on: {{ user.user.date_joined }}<br>
+
+{% if user.first_name %}
+First name: {{ user.user.first_name }}<br>
+{% endif %}
+
+{#{% if user.last_name %}#}
+Last name: {{ user.user.last_name }}<br>
+{#{% endif %}#}
+
+{% if user.avatar %}
+Avatar: {{ user.avatar }}<br>
+{% endif %}
+
+{% if user.description %}
+Description: {{ user.description }}<br>
+{% endif %}
+
+{% if user.country %}
+Country: {{ user.country }}<br>
+{% endif %}
+
+{% if user.birthdate %}
+Birthdate: {{ user.birthdate }}<br>
+{% endif %}
+
 {% endblock %}

@@ -9,6 +9,7 @@
 <header>
     <nav>
         <ul>
+            <li><a href="{% url 'home' %}">Home</a></li>
             {% if request.user.is_authenticated %}
                 <p>{{ request.user.username }}</p>
 {#                <li><a href="{% url 'update_user' %}">Edit Profile</a></li>#}

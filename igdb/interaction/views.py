@@ -16,7 +16,7 @@ class CuratedListsView(View):
     model = CuratedList
 
     def get(self, request):
-        context = {"curated_list": self.model.objects.all()}
+        context = {"curated_lists": self.model.objects.all()}
         return render(request, context=context, template_name="curated_lists.html")
 
 
@@ -130,4 +130,5 @@ class UpdateReviewView(View):
         if form.is_valid():
             form.save()
             return redirect(f"/review/{review.slug}/")
+
         return render(request, template_name="interaction\\update_review.html", context={"form": form})

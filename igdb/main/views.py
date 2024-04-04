@@ -1,12 +1,13 @@
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import authenticate, login, logout, get_user_model
 from django.shortcuts import render, redirect
 from django.views.generic import View
 
-from igdb.main.forms import CreateUserForm, UserLoginForm
+from igdb.main.forms import CreateUserForm, UserLoginForm, UpdateUserForm
 from igdb.main.models import Profile
 
 
 # Create your views here.
+user_model = get_user_model()
 
 
 class HomeView(View):
@@ -35,6 +36,7 @@ class SignOutView(View):
         return redirect("sign_in")
 
 
+# Make sure this is inaccessible when logged in
 class CreateUserView(View):
     def get(self, request):
         form = CreateUserForm()
@@ -57,12 +59,31 @@ class ReadUserView(View):
 
     def get(self, request, pk):
         user = Profile.objects.get(id=pk)
-        return render(request, template_name="main\\read_user.html")
+        return render(request, template_name="main\\read_user.html", context={"user": user})
 
 
 class UpdateUserView(View):
     model = Profile
+    template_name = "main\\update_user.html"
 
     def get(self, request, pk):
-        user = Profile.objects.get(id=pk)
-        return render(request, template_name="main\\update_user.html")
+        user = user_model.objects.get(id=pk)
+        form = UpdateUserForm(instance=user)
+        return render(request, template_name=self.template_name, context={"user": user, "form": form})
+
+    def post(self, request, pk):
+        profile = Profile.objects.get(id=pk)
+        user1 = user_model.objects.get(id=pk)
+        form = UpdateUserForm(request.POST, instance=user1)
+
+        if request.POST.get("action") == "delete":
+            if request.user.is_authenticated:
+                logout(request)
+            user1.delete()
+            return redirect("home")
+
+        if form.is_valid():
+            form.save()
+            return redirect("read_user", pk=pk)
+
+        return render(request, self.template_name, context={"user": profile, "form": form})
