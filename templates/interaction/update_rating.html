@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block title %}Page Title{% endblock %}
+
+{% block content %}
+This is the update or delete Rating page<br>
+    
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Update</button>
+    <button type="submit" name="action" value="delete" id="deleteButton">Delete</button>
+</form>
+{% endblock %}

@@ -68,10 +68,10 @@ class CreateNonVideoGameForm(forms.ModelForm):
 class UpdateVideoGameForm(forms.ModelForm):
     class Meta:
         model = VideoGame
-        exclude = ["name", "slug", "type"]
+        exclude = ["user", "name", "slug", "type"]
 
 
 class UpdateNonVideoGameForm(forms.ModelForm):
     class Meta:
         model = NonVideoGame
-        exclude = ["name", "slug", "type"]
+        exclude = ["user", "name", "slug", "type"]

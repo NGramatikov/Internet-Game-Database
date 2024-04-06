@@ -9,18 +9,20 @@ Available links are:
     <li><a href="{% url 'home' %}">Home</a></li>
     <li><a href="{% url 'games' %}">games</a></li>
     <li><a href="{% url 'reviews' %}">reviews</a></li>
-    <li><a href="{% url 'curated_lists' %}">curated lists</a></li>
+    <li><a href="{% url 'curated_lists' %}">curated lists</a></li><br>
+    
     <li><a href="{% url 'create_game' %}">create_game</a></li>
     <li><a href="{% url 'read_game' slug='call-of-du-3' %}">read_game</a></li>
-    <li><a href="{% url 'update_game' slug='call-of-du-3' %}">update_game</a></li>
-    <li><a href="{% url 'curated_lists' %}">curated_lists</a></li>
+    <li><a href="{% url 'update_game' slug='call-of-du-3' %}">update_game</a></li><br>
+    
     <li><a href="{% url 'create_list' %}">create_list</a></li>
-    <li><a href="{% url 'read_list' slug='my-first-l-1' %}">read_list</a></li>
-    <li><a href="{% url 'update_list' slug='my-first-l-1' %}">update_list</a></li>
-{#    <li><a href="{% url 'create_review' %}">create_review</a></li>#}
-    <li><a href="{% url 'read_review' slug='call-of-du-1' %}">read_review</a></li>
-    <li><a href="{% url 'update_review' slug='call-of-du-1' %}">update_review</a></li>
-    <li><a href="{% url 'sign_in' %}">sign_in</a></li>
+    <li><a href="{% url 'read_list' slug='curated-li-1' %}">read_list</a></li>
+    <li><a href="{% url 'update_list' slug='curated-li-1' %}">update_list</a></li><br>
+    
+    <li><a href="{% url 'read_review' slug='review-01-1' %}">read_review</a></li>
+    <li><a href="{% url 'update_review' slug='review-01-1' %}">update_review</a></li>
+    <li><a href="{% url 'sign_in' %}">sign_in</a></li><br>
+    
     <li><a href="{% url 'create_user' %}">create_user</a></li>
     <li><a href="{% url 'read_user' pk=1 %}">read_user</a></li>
     <li><a href="{% url 'update_user' pk=1 %}">update_user</a></li>

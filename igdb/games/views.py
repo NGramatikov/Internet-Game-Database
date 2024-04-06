@@ -4,6 +4,7 @@ from django.views.generic import View, CreateView
 
 from igdb.games.forms import CreateVideoGameForm, CreateNonVideoGameForm, UpdateVideoGameForm, UpdateNonVideoGameForm
 from igdb.games.models import VideoGame, NonVideoGame, Game
+from igdb.interaction.forms import CreateCommentForm
 
 
 # Create your views here.
@@ -73,6 +74,7 @@ class CreateGameView(CreateView):
             non_video_game = non_video_game_form.save()
             slug = non_video_game.slug
             return redirect(reverse("read_game", kwargs={"slug": slug}))
+
         else:
             context = {"video_game_form": video_game_form, "non_video_game_form": non_video_game_form}
             return render(request, template_name=self.template_name, context=context)

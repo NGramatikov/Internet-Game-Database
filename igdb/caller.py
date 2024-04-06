@@ -118,15 +118,5 @@ for model in inter_models:
     content_types.append(ContentType.objects.get_for_model(model))
 # print(content_types)
 
-
-def get_content_object(slug):
-    for content_type in content_types:
-        if content_type.objects.get(slug=slug):
-            obj = content_type.objects.get(slug=slug)
-            return content_type, obj.id
-    else:
-        print("Error! Game not found!")
-
-
-user5 = User.objects.get(id=5)
-print(user5.profile)
+comment = Comment.objects.get(id=4)
+print(comment.content_object.slug)

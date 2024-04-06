@@ -14,9 +14,9 @@ Joined on: {{ user.user.date_joined }}<br>
 First name: {{ user.user.first_name }}<br>
 {% endif %}
 
-{#{% if user.last_name %}#}
+{% if user.last_name %}
 Last name: {{ user.user.last_name }}<br>
-{#{% endif %}#}
+{% endif %}
 
 {% if user.avatar %}
 Avatar: {{ user.avatar }}<br>

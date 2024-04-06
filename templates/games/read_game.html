@@ -22,8 +22,7 @@ Rating: {{ game.age_range }}+<br>
 
 {% if game.cover %}
 Cover: {{ game.cover }}<br>
-{% endif %}
-<br>
+{% endif %}<br>
 
 These are the fields, specific to the game type:<br>
 {% if game.type == "Video Games" %}
@@ -64,22 +63,24 @@ These are the fields, specific to the game type:<br>
         Skills: {{ game.skills }}<br>
     {% endif %}
     
-{% endif %}
-<br>
-    
+{% endif %}<br>
 
-    
 
-<button id="like_button">Like</button>
-<button id="rate_button">Rate</button>
-<button id="comment_button">Comment</button>
+<form action="{% url 'create_like' slug=game.slug %}" method="post" class="like-form">
+    {% csrf_token %}
+    <button type="submit">Like</button>
+</form>
+
+<button id="comment_button" onclick="window.location.href='{% url 'create_comment' slug=game.slug %}';">Comment</button>
+
+<button id="rate_button" onclick="window.location.href='{% url 'create_rating' slug=game.slug %}';">Rate</button>
+
 <button id="review_button" onclick="window.location.href='{% url 'create_review' slug=game.slug %}';">Review</button><br>
+    
 
 Likes: {{ game.likes.all | length }}<br>
 Ratings: {{ game.ratings.all }}<br>
 Comments: {{ game.comments.all }}<br>
 Reviews: {{ game.reviews.all }}<br>
-    
-    
-{% endblock %}
 
+{% endblock %}
