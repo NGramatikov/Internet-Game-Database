@@ -32,6 +32,8 @@ class UpdateUserForm(forms.ModelForm):
     class Meta:
         model = user_model
         fields = ["first_name", "last_name", "email"]
+        help_texts = {"description": "Enter a short description of your profile.",
+                      "birthdate": "Enter your birthdate in YYYY-MM-DD format."}
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

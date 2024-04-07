@@ -1,5 +1,7 @@
 from django.contrib.auth import authenticate, login, logout, get_user_model
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render, redirect
+from django.urls import reverse_lazy
 from django.views.generic import View
 
 from igdb.main.forms import CreateUserForm, UserLoginForm, UpdateUserForm
@@ -30,20 +32,25 @@ def sign_in(request):
     return render(request, "main\\signin.html", {"form": form})
 
 
-class SignOutView(View):
+class SignOutView(LoginRequiredMixin, View):
     def get(self, request):
         logout(request)
         return redirect("sign_in")
 
 
-# Make sure this is inaccessible when logged in
 class CreateUserView(View):
     def get(self, request):
+        if request.user.is_authenticated:
+            return redirect("home")
+
         form = CreateUserForm()
         context = {"form": form}
         return render(request, "main\\create_user.html", context=context)
 
     def post(self, request):
+        if request.user.is_authenticated:
+            return redirect("home")
+
         form = CreateUserForm(request.POST or None)
         if request.method == "POST" and form.is_valid():
             form.save()
@@ -62,19 +69,27 @@ class ReadUserView(View):
         return render(request, template_name="main\\read_user.html", context={"user": user})
 
 
-class UpdateUserView(View):
+class UpdateUserView(LoginRequiredMixin, View):
     model = Profile
     template_name = "main\\update_user.html"
+    login_url = reverse_lazy("sign_in")
 
     def get(self, request, pk):
         user = user_model.objects.get(id=pk)
         form = UpdateUserForm(instance=user)
+
+        if request.user != user:
+            return redirect("update_user", pk=request.user.id)
+
         return render(request, template_name=self.template_name, context={"user": user, "form": form})
 
     def post(self, request, pk):
         profile = Profile.objects.get(id=pk)
         user1 = user_model.objects.get(id=pk)
         form = UpdateUserForm(request.POST, instance=user1)
+
+        if request.user != user1:
+            return redirect("update_user", pk=request.user.id)
 
         if request.POST.get("action") == "delete":
             if request.user.is_authenticated:

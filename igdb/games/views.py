@@ -1,10 +1,14 @@
+from django.core.exceptions import PermissionDenied
+from django.http import request, Http404
 from django.shortcuts import render, redirect, get_object_or_404
-from django.urls import reverse
+from django.urls import reverse, reverse_lazy
 from django.views.generic import View, CreateView
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 from igdb.games.forms import CreateVideoGameForm, CreateNonVideoGameForm, UpdateVideoGameForm, UpdateNonVideoGameForm
 from igdb.games.models import VideoGame, NonVideoGame, Game
 from igdb.interaction.forms import CreateCommentForm
+from igdb.interaction.models import Like
 
 
 # Create your views here.
@@ -29,10 +33,11 @@ class GamesView(View):
 #         return response
 
 
-class CreateGameView(CreateView):
+class CreateGameView(LoginRequiredMixin, CreateView):
     video_game_form_class = CreateVideoGameForm
     non_video_game_form_class = CreateNonVideoGameForm
     template_name = "games/create_game.html"
+    login_url = reverse_lazy("sign_in")
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
@@ -45,25 +50,14 @@ class CreateGameView(CreateView):
         return response
 
     def get(self, request, *args, **kwargs):
-        # form = self.video_game_form_class() or self.non_video_game_form_class()
-        # context = {"form": form}
-
-        video_game_form = self.video_game_form_class()
-        non_video_game_form = self.non_video_game_form_class()
+        video_game_form = self.video_game_form_class(user=request.user)
+        non_video_game_form = self.non_video_game_form_class(user=request.user)
         context = {"video_game_form": video_game_form, "non_video_game_form": non_video_game_form}
         return render(request, template_name=self.template_name, context=context)
 
     def post(self, request, *args, **kwargs):
-        # form = self.video_game_form_class() or self.non_video_game_form_class()
         video_game_form = self.video_game_form_class(request.POST or None, user=request.user)
         non_video_game_form = self.non_video_game_form_class(request.POST or None, user=request.user)
-
-        # if request.method == "POST" and form.is_valid():
-        #     game = form.save()
-        #     slug = game.slug
-        #     return redirect(reverse("read_game", kwargs={"slug": slug}))
-        # context = {"form": form}
-        # return render(request, template_name=self.template_name, context=context)
 
         if request.method == "POST" and video_game_form.is_valid():
             video_game = video_game_form.save()
@@ -94,12 +88,18 @@ class ReadGameView(View):
         likes = game.likes.all()
         comments = game.comments.all()
 
-        context = {"game": game, "ratings": ratings, "likes": likes, "comments": comments}
+        if request.user.is_authenticated:  # Check if the user is authenticated
+            is_liked = likes.filter(user=request.user).exists()
+        else:
+            is_liked = False
+
+        context = {"game": game, "ratings": ratings, "likes": likes, "comments": comments, "is_liked": is_liked}
         return render(request, template_name="games\\read_game.html", context=context)
 
 
-class UpdateGameView(View):
+class UpdateGameView(LoginRequiredMixin, View):
     template_name = "games\\update_game.html"
+    login_url = reverse_lazy("sign_in")
 
     def get_game(self, slug):
         try:
@@ -108,12 +108,14 @@ class UpdateGameView(View):
             try:
                 game_instance = NonVideoGame.objects.get(slug=slug)
             except NonVideoGame.DoesNotExist:
-                # Handle case where neither VideoGame nor NonVideoGame with the given slug exists
-                pass
+                raise Http404("Game does not exist")
         return game_instance
 
     def get(self, request, slug):
         game_instance = self.get_game(slug)
+        if request.user != game_instance.user:
+            return redirect("read_game", slug=slug)
+
         if isinstance(game_instance, VideoGame):
             game_form = UpdateVideoGameForm(instance=game_instance)
         else:
@@ -122,6 +124,9 @@ class UpdateGameView(View):
 
     def post(self, request, slug):
         game_instance = self.get_game(slug)
+        if request.user != game_instance.user:
+            return redirect("read_game", slug=slug)
+
         if isinstance(game_instance, VideoGame):
             game_form = UpdateVideoGameForm(request.POST, instance=game_instance)
         else:

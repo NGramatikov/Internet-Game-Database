@@ -65,6 +65,7 @@ class VideoGame(Game, Likeable, Rateable, Commentable, Reviewable):
         return f"{self.name} was released in {self.release_year} by {self.publisher}."
 
 
+# TODO: fix the time so it can keep more than 12 hours
 class NonVideoGame(Game, Likeable, Rateable, Commentable, Reviewable):
     players = models.PositiveSmallIntegerField(null=False, blank=False)
     rules = models.TextField(null=False, blank=False)

@@ -9,6 +9,9 @@ class CreateCuratedListForm(forms.ModelForm):
     class Meta:
         model = CuratedList
         fields = ["title", "description", "user", "items"]
+        error_messages = {"title": {"unique": "A curated list with that name already exists."}}
+        help_texts = {"description": "Enter a short description of the curated list.",
+                      "items": "Enter a comma-separated list of items."}
 
     def __init__(self, *args, **kwargs):
         user = kwargs.pop("user", None)
@@ -48,6 +51,7 @@ class CreateReviewForm(forms.ModelForm):
     class Meta:
         model = Review
         fields = ["user", "title", "content", "content_type", "object_id"]
+        error_messages = {"title": {"unique": "A review with that name already exists."}}
 
     def clean(self):
         cleaned_data = super().clean()
@@ -64,6 +68,12 @@ class UpdateReviewForm(forms.ModelForm):
 
 
 class CreateLikeForm(forms.ModelForm):
+    class Meta:
+        model = Like
+        fields = []
+
+
+class DeleteLikeForm(forms.ModelForm):
     class Meta:
         model = Like
         fields = []

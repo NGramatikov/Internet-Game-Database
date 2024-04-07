@@ -50,11 +50,11 @@ These are the fields, specific to the game type:<br>
     Rules: {{ game.rules }}<br>
     
     {% if game.setup_time%}
-        Setup Time: {{ game.setup_time }}<br>
+        Setup Time: {{ game.setup_time|time:"H:i" }}<br>
     {% endif %}
     
     {% if game.playtime %}
-        Playtime: {{ game.playtime }}<br>
+        Playtime: {{ game.playtime|time:"H:i" }}<br>
     {% endif %}
     
     Chance: {{ game.chance }}<br>
@@ -62,25 +62,46 @@ These are the fields, specific to the game type:<br>
     {% if game.skills %}
         Skills: {{ game.skills }}<br>
     {% endif %}
-    
 {% endif %}<br>
 
-
-<form action="{% url 'create_like' slug=game.slug %}" method="post" class="like-form">
+{% if not user.is_authenticated %}
+    <button id="like_button" onclick="window.location.href='{% url 'sign_in' %}';">Like</button>
+{% elif user.is_authenticated and not is_liked %}
+    <form action="{% url 'create_like' slug=game.slug %}" method="post" class="like-form">
     {% csrf_token %}
     <button type="submit">Like</button>
-</form>
+    </form>
+{% elif user.is_authenticated and is_liked %}
+    <form action="{% url 'delete_like' slug=game.slug %}" method="post" class="like-form">
+    {% csrf_token %}
+    <button type="submit">Dislike</button>
+    </form>
+{% endif %}
 
-<button id="comment_button" onclick="window.location.href='{% url 'create_comment' slug=game.slug %}';">Comment</button>
 
+{% if not user.is_authenticated %}
+    <button id="comment_button" onclick="window.location.href='{% url 'sign_in' %}';">Comment</button>
+{% elif user.is_authenticated %}
+    <button id="comment_button" onclick="window.location.href='{% url 'create_comment' slug=game.slug %}';">Comment</button>
+{% endif %}
+
+{% if not user.is_authenticated %}
+    <button id="rate_button" onclick="window.location.href='{% url 'sign_in' %}';">Rate</button>
+{% elif user.is_authenticated %}
 <button id="rate_button" onclick="window.location.href='{% url 'create_rating' slug=game.slug %}';">Rate</button>
+{% endif %}
 
+{% if not user.is_authenticated %}
+    <button id="review_button" onclick="window.location.href='{% url 'sign_in' %}';">Review</button><br>
+{% elif user.is_authenticated %}
 <button id="review_button" onclick="window.location.href='{% url 'create_review' slug=game.slug %}';">Review</button><br>
-    
+{% endif %}
 
 Likes: {{ game.likes.all | length }}<br>
 Ratings: {{ game.ratings.all }}<br>
 Comments: {{ game.comments.all }}<br>
 Reviews: {{ game.reviews.all }}<br>
+
+
 
 {% endblock %}

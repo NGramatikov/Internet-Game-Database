@@ -16,6 +16,25 @@ from django.contrib.contenttypes.models import ContentType
 from igdb.interaction.models import CuratedList, Like, Comment, Review, Rating, GenericInteraction, Likeable, Rateable, \
     Commentable, Reviewable
 
+
+'''
+Preventing SQL injection:
+    Django's ORM abstracts away direct SQL queries and automatically escapes user input, significantly reducing 
+    the risk of SQL injection.
+
+Preventing XSS:
+    Django's template engine comes with built-in protections against XSS. Namely in settings.py> middleware:
+        'django.middleware.security.SecurityMiddleware'
+
+Preventing CSRF:
+    Django provides CSRF protection by generating and validating unique tokens for each user session. Also in 
+    settings.py> middleware> 'django.middleware.csrf.CsrfViewMiddleware' and in every form: {% csrf_token %}
+
+Preventing parameter tampering:
+    We use the @login_required decorator for function-based views and the LoginRequiredMixin for class-based views.
+    Also we have added checks on all of the Update views that the user accessing them is the same user who created them.
+'''
+
 # def_user = User(username="user1", password="pass1")
 # def_user.save()
 # cust_user = Profile(user=def_user, description="This is the first profile")
@@ -118,5 +137,11 @@ for model in inter_models:
     content_types.append(ContentType.objects.get_for_model(model))
 # print(content_types)
 
-comment = Comment.objects.get(id=4)
-print(comment.content_object.slug)
+# comment = Comment.objects.get(id=1)
+# print(comment.content_object.slug)
+
+game1 = VideoGame.objects.get(slug="call-of-du-3")
+user1 = User.objects.get(id=1)
+for like in game1.likes.all():
+    if like.user == user1:
+        print("Yes")
