@@ -81,20 +81,24 @@ These are the fields, specific to the game type:<br>
 
 {% if not user.is_authenticated %}
     <button id="comment_button" onclick="window.location.href='{% url 'sign_in' %}';">Comment</button>
-{% elif user.is_authenticated %}
+{% elif user.is_authenticated%}
     <button id="comment_button" onclick="window.location.href='{% url 'create_comment' slug=game.slug %}';">Comment</button>
 {% endif %}
 
 {% if not user.is_authenticated %}
     <button id="rate_button" onclick="window.location.href='{% url 'sign_in' %}';">Rate</button>
-{% elif user.is_authenticated %}
+{% elif user.is_authenticated and not is_rated %}
 <button id="rate_button" onclick="window.location.href='{% url 'create_rating' slug=game.slug %}';">Rate</button>
+{% elif user.is_authenticated and is_rated %}
+    Your rating: {{ rating.content }}
 {% endif %}
 
 {% if not user.is_authenticated %}
     <button id="review_button" onclick="window.location.href='{% url 'sign_in' %}';">Review</button><br>
-{% elif user.is_authenticated %}
+{% elif user.is_authenticated and not is_reviewed %}
 <button id="review_button" onclick="window.location.href='{% url 'create_review' slug=game.slug %}';">Review</button><br>
+{% elif user.is_authenticade and is_reviewed %}
+    Already reviewed
 {% endif %}
 
 Likes: {{ game.likes.all | length }}<br>

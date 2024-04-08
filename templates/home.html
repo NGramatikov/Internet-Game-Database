@@ -3,6 +3,22 @@
 {% block title %}Page Title{% endblock %}
 
 {% block content %}
+
+
+<ul>
+{% for video_game in video_games %}
+    <li>{{ video_game }}</li>
+{% endfor %}
+</ul>
+
+
+
+
+
+
+
+
+
 This is the home page.
 Available links are:
 <ul>

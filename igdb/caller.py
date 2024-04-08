@@ -145,3 +145,6 @@ user1 = User.objects.get(id=1)
 for like in game1.likes.all():
     if like.user == user1:
         print("Yes")
+
+rating = Rating.objects.all().filter(user=User.objects.get(id=1)).first()
+print(rating.content)

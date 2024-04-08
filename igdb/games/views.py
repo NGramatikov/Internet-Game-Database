@@ -1,42 +1,34 @@
-from django.core.exceptions import PermissionDenied
-from django.http import request, Http404
-from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse, reverse_lazy
+from django.shortcuts import render, redirect
 from django.views.generic import View, CreateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 
+from igdb.interaction.models import Review
+from utils import get_game_object
+from igdb.games.models import VideoGame, NonVideoGame
 from igdb.games.forms import CreateVideoGameForm, CreateNonVideoGameForm, UpdateVideoGameForm, UpdateNonVideoGameForm
-from igdb.games.models import VideoGame, NonVideoGame, Game
-from igdb.interaction.forms import CreateCommentForm
-from igdb.interaction.models import Like
 
 
 # Create your views here.
 class GamesView(View):
-    video_game_model = VideoGame
-    non_video_game_model = NonVideoGame
-
     def get(self, request):
-        games = {"video_games": VideoGame.objects.all(), "non_video_games": NonVideoGame.objects.all()}
-        return render(request, context=games, template_name="games.html")
+        video_games = VideoGame.objects.all()
+        non_video_games = NonVideoGame.objects.all()
+        context = {"video_games": video_games, "non_video_games": non_video_games}
+
+        return render(request, template_name="games.html", context=context, )
 
 
-# class BaseCreateGameView(CreateView):
-#     def get_form_kwargs(self):
-#         kwargs = super().get_form_kwargs()
-#         kwargs["user"] = self.request.user
-#         return kwargs
-#
-#     def form_valid(self, form):
-#         form.instance.user = self.request.user
-#         response = super().form_valid(form)
-#         return response
+"""
+By using the LoginRequiredMixin we make sure that only authenticated users can create, update or delete games. Otherwise
+we redirect them to the login page. We also make sure to add the user field to the form kwargs and save him when the 
+form is valid so that the actual user doesn't have to. 
+"""
 
 
 class CreateGameView(LoginRequiredMixin, CreateView):
     video_game_form_class = CreateVideoGameForm
     non_video_game_form_class = CreateNonVideoGameForm
-    template_name = "games/create_game.html"
     login_url = reverse_lazy("sign_in")
 
     def get_form_kwargs(self):
@@ -53,7 +45,8 @@ class CreateGameView(LoginRequiredMixin, CreateView):
         video_game_form = self.video_game_form_class(user=request.user)
         non_video_game_form = self.non_video_game_form_class(user=request.user)
         context = {"video_game_form": video_game_form, "non_video_game_form": non_video_game_form}
-        return render(request, template_name=self.template_name, context=context)
+
+        return render(request, template_name="games\\create_game.html", context=context)
 
     def post(self, request, *args, **kwargs):
         video_game_form = self.video_game_form_class(request.POST or None, user=request.user)
@@ -71,73 +64,84 @@ class CreateGameView(LoginRequiredMixin, CreateView):
 
         else:
             context = {"video_game_form": video_game_form, "non_video_game_form": non_video_game_form}
-            return render(request, template_name=self.template_name, context=context)
+            return render(request, template_name="games\\create_game.html", context=context)
 
 
-# Since the games are in two different database tables their ids will duplicate, so we will identify them by slug.
+"""
+Since the games are in two different database tables their ids will duplicate, so we will identify them by slug to make
+sure we have the right object. Also this code repeats itself several times across the project so we might as well make
+it a separate function which can be imported into other files.
+"""
+
+
 class ReadGameView(View):
     video_game_model = VideoGame
     non_video_game_model = NonVideoGame
 
     def get(self, request, slug):
-        try:
-            game = VideoGame.objects.get(slug=slug)
-        except VideoGame.DoesNotExist:
-            game = NonVideoGame.objects.get(slug=slug)
+        game = get_game_object(slug)
         ratings = game.ratings.all()
         likes = game.likes.all()
         comments = game.comments.all()
+        avg_rating = sum([el.content for el in ratings]) / len(ratings)
 
-        if request.user.is_authenticated:  # Check if the user is authenticated
+        if request.user.is_authenticated:
             is_liked = likes.filter(user=request.user).exists()
+            is_rated = ratings.filter(user=request.user).exists()
+            # is_reviewed = Review.objects.filter(user=request.user, content_object=game).exists()
+            rating = ratings.filter(user=request.user).first()
         else:
             is_liked = False
+            is_rated = False
+            # is_reviewed = False
 
-        context = {"game": game, "ratings": ratings, "likes": likes, "comments": comments, "is_liked": is_liked}
+        context = {"game": game, "ratings": ratings, "likes": likes, "comments": comments, "is_liked": is_liked,
+                   "is_rated": is_rated, "avg_rating": avg_rating, "rating": rating, }#"is_reviewed": is_reviewed}
         return render(request, template_name="games\\read_game.html", context=context)
+
+
+"""
+If the user is not logged in we redirect him to the read_game page. We also make sure to add the user field to the form 
+kwargs and save him when the form is valid. We also make sure the game is deleted when the user presses the delete 
+button and confirms the action. That kind of violates the single responsibility principle, but most real web pages allow
+to modify and delete an object on the same page.
+"""
 
 
 class UpdateGameView(LoginRequiredMixin, View):
     template_name = "games\\update_game.html"
     login_url = reverse_lazy("sign_in")
 
-    def get_game(self, slug):
-        try:
-            game_instance = VideoGame.objects.get(slug=slug)
-        except VideoGame.DoesNotExist:
-            try:
-                game_instance = NonVideoGame.objects.get(slug=slug)
-            except NonVideoGame.DoesNotExist:
-                raise Http404("Game does not exist")
-        return game_instance
-
     def get(self, request, slug):
-        game_instance = self.get_game(slug)
-        if request.user != game_instance.user:
+        game = get_game_object(slug)
+
+        if request.user != game.user:
             return redirect("read_game", slug=slug)
 
-        if isinstance(game_instance, VideoGame):
-            game_form = UpdateVideoGameForm(instance=game_instance)
+        if isinstance(game, VideoGame):
+            form = UpdateVideoGameForm(instance=game)
         else:
-            game_form = UpdateNonVideoGameForm(instance=game_instance)
-        return render(request, self.template_name, {"game_instance": game_instance, "game_form": game_form})
+            form = UpdateNonVideoGameForm(instance=game)
+
+        return render(request, self.template_name, {"game": game, "form": form})
 
     def post(self, request, slug):
-        game_instance = self.get_game(slug)
-        if request.user != game_instance.user:
+        game = get_game_object(slug)
+
+        if request.user != game.user:
             return redirect("read_game", slug=slug)
 
-        if isinstance(game_instance, VideoGame):
-            game_form = UpdateVideoGameForm(request.POST, instance=game_instance)
+        if isinstance(game, VideoGame):
+            form = UpdateVideoGameForm(request.POST, instance=game)
         else:
-            game_form = UpdateNonVideoGameForm(request.POST, instance=game_instance)
+            form = UpdateNonVideoGameForm(request.POST, instance=game)
 
         if request.POST.get("action") == "delete":
-            game_instance.delete()
+            game.delete()
             return redirect("home")
 
-        if game_form.is_valid():
-            game_form.save()
+        if form.is_valid():
+            form.save()
             return redirect("read_game", slug=slug)
 
-        return render(request, self.template_name, {"game_instance": game_instance, "game_form": game_form})
+        return render(request, self.template_name, {"game": game, "form": form})

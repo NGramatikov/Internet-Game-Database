@@ -7,9 +7,19 @@ This is the update and delete game page
 
 <form method="post" id="update_game_form">
     {% csrf_token %}
-    {{ game_form.as_p }}
-    <input type="hidden" name="game_type" value="{{ game_instance.get_game_type }}">
+    {{ form.as_p }}
+    <input type="hidden" name="game_type" value="{{ game.get_game_type }}">
     <button type="submit">Update Game</button>
     <button type="submit" name="action" value="delete" id="deleteButton">Delete Game</button>
 </form>
+
+<script>
+document.getElementById('deleteButton').addEventListener('click', function(event) {
+    var confirmation = confirm("Are you sure you want to delete this game?");
+    if (!confirmation) {
+        event.preventDefault(); // Prevents the default action (form submission)
+    }
+});
+</script>
+
 {% endblock %}
