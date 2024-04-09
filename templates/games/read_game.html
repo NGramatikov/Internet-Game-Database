@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-{% block title %}Page Title{% endblock %}
+{% block title %}Read game{% endblock %}
 
 {% block content %}
 This is the Read Game page<br><br>
@@ -18,7 +18,7 @@ Description: {{ game.description }}<br>
 Genre: {{ game.genre }}<br>
 {% endif %}
 
-Rating: {{ game.age_range }}+<br>
+Age Rating: {{ game.age_range }}+<br>
 
 {% if game.cover %}
 Cover: {{ game.cover }}<br>
@@ -88,24 +88,44 @@ These are the fields, specific to the game type:<br>
 {% if not user.is_authenticated %}
     <button id="rate_button" onclick="window.location.href='{% url 'sign_in' %}';">Rate</button>
 {% elif user.is_authenticated and not is_rated %}
-<button id="rate_button" onclick="window.location.href='{% url 'create_rating' slug=game.slug %}';">Rate</button>
+    <button id="rate_button" onclick="window.location.href='{% url 'create_rating' slug=game.slug %}';">Rate</button>
 {% elif user.is_authenticated and is_rated %}
-    Your rating: {{ rating.content }}
+    <button id="rate_button" onclick="window.location.href='{% url 'update_rating' pk=rating.id %}';">Your rating: {{ rating.content }}/10</button>
 {% endif %}
 
 {% if not user.is_authenticated %}
     <button id="review_button" onclick="window.location.href='{% url 'sign_in' %}';">Review</button><br>
 {% elif user.is_authenticated and not is_reviewed %}
 <button id="review_button" onclick="window.location.href='{% url 'create_review' slug=game.slug %}';">Review</button><br>
-{% elif user.is_authenticade and is_reviewed %}
-    Already reviewed
+{% elif user.is_authenticated and is_reviewed %}
+    <button id="review_button" onclick="window.location.href='{% url 'update_review' slug=review_slug %}';">Your Review</button>
 {% endif %}
 
+<br>
 Likes: {{ game.likes.all | length }}<br>
-Ratings: {{ game.ratings.all }}<br>
-Comments: {{ game.comments.all }}<br>
-Reviews: {{ game.reviews.all }}<br>
+Average Rating: {{ avg_rating }}<br>
 
+Reviews:
+<ul>
+{% for review in game.reviews.all %}
+    <li><a href="{% url 'read_review' slug=review.slug %}">{{ review.title }}</a></li>
+{% endfor %}
+</ul>
+
+Comments:<br>
+<ul>
+{% for comment in game.comments.all %}
+    <li>
+    {{ comment.content }}<br>
+    Added by: {{ comment.user.username }}<br>
+    Added on: {{ comment.created_at }}<br>
+    {% if is_commented %}
+    <button id="eddit_comment_button" onclick="window.location.href='{% url 'update_comment' pk=comment.id %}';">Edit Comment</button>
+    {% endif %}
+    </li>
+</ul>
+{% endfor %}
+    
 
 
 {% endblock %}

@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-{% block title %}Page Title{% endblock %}
+{% block title %}Update game{% endblock %}
 
 {% block content %}
 This is the update and delete game page
@@ -15,7 +15,7 @@ This is the update and delete game page
 
 <script>
 document.getElementById('deleteButton').addEventListener('click', function(event) {
-    var confirmation = confirm("Are you sure you want to delete this game?");
+    var confirmation = confirm("Are you sure you want to delete?");
     if (!confirmation) {
         event.preventDefault(); // Prevents the default action (form submission)
     }

@@ -26,6 +26,9 @@ class HomeView(View):
 
 def sign_in(request):
     if request.method == "POST":
+        if request.user.is_authenticated:
+            return redirect("home")
+
         form = UserLoginForm(request.POST)
 
         if form.is_valid():
@@ -38,6 +41,8 @@ def sign_in(request):
                 return redirect("home")
 
     else:
+        if request.user.is_authenticated:
+            return redirect("home")
         form = UserLoginForm()
 
     return render(request, "main\\signin.html", {"form": form})

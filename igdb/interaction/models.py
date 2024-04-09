@@ -129,7 +129,7 @@ class Review(GenericInteraction):
             super().save(*args, **kwargs)
 
     def __str__(self):
-        return f"Review {self.title} was created by {self.user.username} on {self.created_at}"
+        return f"Review {self.title} was created by {self.user} on {self.created_at}"
 
 
 class Reviewable(models.Model):

@@ -3,10 +3,11 @@ from datetime import datetime
 from django.contrib.auth import get_user_model
 from django.template.defaultfilters import slugify
 from django.core.validators import MinLengthValidator
+from django.contrib.contenttypes.fields import GenericRelation
 
 from igdb.main.models import Profile
 from igdb.games.validators import validate_name
-from igdb.interaction.models import Rating, Like, Comment, Rateable, Likeable, Commentable, Reviewable
+from igdb.interaction.models import Rating, Like, Comment, Rateable, Likeable, Commentable, Reviewable, Review
 
 # Create your models here.
 '''
@@ -100,6 +101,11 @@ class Game(Likeable, Rateable, Commentable, Reviewable, models.Model):
     slug = models.SlugField(
         unique=True,
         blank=True,
+    )
+
+    reviews = GenericRelation(
+        to="interaction.Review",
+        related_query_name="fk_games_reviews",
     )
 
     """

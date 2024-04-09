@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-{% block title %}Page Title{% endblock %}
+{% block title %}Update rating{% endblock %}
 
 {% block content %}
 This is the update or delete Rating page<br>
@@ -11,4 +11,14 @@ This is the update or delete Rating page<br>
     <button type="submit">Update</button>
     <button type="submit" name="action" value="delete" id="deleteButton">Delete</button>
 </form>
+
+<script>
+document.getElementById('deleteButton').addEventListener('click', function(event) {
+    var confirmation = confirm("Are you sure you want to delete?");
+    if (!confirmation) {
+        event.preventDefault(); // Prevents the default action (form submission)
+    }
+});
+</script>
+
 {% endblock %}

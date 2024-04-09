@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-{% block title %}Page Title{% endblock %}
+{% block title %}Sign up{% endblock %}
 
 {% block content %}
 This is the register user page
@@ -8,7 +8,7 @@ This is the register user page
 <form method="post">
     {% csrf_token %}
     {{ form.as_p }}
-    <button type="submit">Signup</button>
+    <button type="submit">Signup</button><br>
     <a href="{% url 'sign_in' %}">Already have account?</a>
 </form>
 {% endblock %}

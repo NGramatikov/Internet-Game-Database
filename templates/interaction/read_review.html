@@ -1,9 +1,14 @@
 {% extends 'base.html' %}
 
-{% block title %}Page Title{% endblock %}
+{% block title %}Read review{% endblock %}
 
 {% block content %}
 This is the Read Review page<br>
-    
-    {{ review }}
+Title: {{ review.title }}<br>
+Review: {{ review.content }}<br>
+Added by: {{ review.user.username }}<br>
+Added on: {{ review.created_at }}<br>
+{% if user == review.user %}
+    <button id="review_button" onclick="window.location.href='{% url 'update_review' slug=review.slug %}';">Edit Review</button>
+{% endif %}
 {% endblock %}

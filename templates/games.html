@@ -1,22 +1,89 @@
-{% extends 'base.html' %}
+{#{% extends 'base.html' %}#}
+{##}
+{#{% block title %}Page Title{% endblock %}#}
+{##}
+{#{% block content %}#}
+{#This is the generic Game view page#}
+{##}
+{##}
+{#<ul>#}
+{#{% for game in all_games %}#}
+{#    <li><a href="{% url 'read_game' slug=game.slug %}">{{ game.name }}</a></li>#}
+{#{% endfor %}#}
+{#</ul>#}
+{##}
+{#{% endblock %}#}
 
-{% block title %}Page Title{% endblock %}
+
+{% extends 'base.html' %}
+{% block title %}Home{% endblock %}
 
 {% block content %}
-This is the generic Game view page
+<div class="container">
+    <!-- Video Games Carousel -->
+    <div id="video-games-carousel" class="carousel slide mb-4" data-ride="carousel">
+        <div class="carousel-inner">
+            {% for video_game in video_games %}
+            <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                <img src="{{ video_game.cover }}" class="d-block w-100" alt="No cover">
+                <div class="carousel-caption d-none d-md-block">
+                    <h5>{{ video_game.name }}</h5>
+                    <p>{{ video_game.description }}</p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <a class="carousel-control-prev" href="#video-games-carousel" role="button" data-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="sr-only">Previous</span>
+        </a>
+        <a class="carousel-control-next" href="#video-games-carousel" role="button" data-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="sr-only">Next</span>
+        </a>
+    </div>
+    
+    <!-- Non Video Games -->
+    <div class="row mb-4">
+        {% for non_video_game in non_video_games %}
+        <div class="col-md-3">
+            <div class="card">
+                <img src="{{ non_video_game.cover }}" class="card-img-top" alt="...">
+                <div class="card-body">
+                    <h5 class="card-title">{{ non_video_game.name }}</h5>
+                    <p class="card-text">{{ non_video_game.description }}</p>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
 
-Available video games:
-<ul>
-{% for game in video_games %}
-    <li>{{ game }}</li>
-{% endfor %}
-</ul><br>
+    <!-- Curated Lists -->
+    <div class="row mb-4">
+        {% for curated_list in curated_lists %}
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title"><a href="{% url 'read_list' slug=curated_list.slug %}">{{ curated_list.title }}</a></h5>
+                    <p class="card-text">{{ curated_list.description }}</p>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
 
-Available non-video games:
-<ul>
-{% for game in non_video_games %}
-    <li>{{ game }}</li>
-{% endfor %}
-</ul>
-
+    <!-- Reviews -->
+    <div class="row mb-4">
+        {% for review in reviews %}
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">{{ review.title }}</h5>
+                    <p class="card-text">{{ review.content }}</p>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
 {% endblock %}

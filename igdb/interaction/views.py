@@ -77,7 +77,8 @@ class CreateCuratedListView(LoginRequiredMixin, CreateView):
 class ReadCuratedListView(View):
     def get(self, request, slug):
         curated_list = get_object_or_404(CuratedList, slug=slug)
-        context = {"curated_list": curated_list}
+        list_items = curated_list.items.all()
+        context = {"curated_list": curated_list, "list_items": list_items}
         return render(request, "interaction\\read_list.html", context)
 
 
@@ -123,7 +124,11 @@ class CreateReviewView(CreateGenericInteractionView):
 class ReadReviewView(View):
     def get(self, request, slug):
         review = get_object_or_404(Review, slug=slug)
-        return render(request, template_name="interaction\\read_review.html", context={"review": review})
+        if request.user.is_authenticated:
+            user = request.user
+        else:
+            user = None
+        return render(request, template_name="interaction\\read_review.html", context={"review": review, "user": user})
 
 
 class UpdateReviewView(LoginRequiredMixin, View):

@@ -1,9 +1,17 @@
 {% extends 'base.html' %}
 
-{% block title %}Page Title{% endblock %}
+{% block title %}Read list{% endblock %}
 
 {% block content %}
-This is the Read a Curated List page
+This is the Read a Curated List page<br>
     
-    {{ curated_list }}
+Title: {{ curated_list.title }}<br>
+Created by: {{ curated_list.user.username }}<br>
+Added on: {{ curated_list.created_at }}<br>
+Games:<br>
+<ul>
+{% for game in list_items %}
+    <li><a href="{% url 'read_game' slug=game.slug %}">{{ game.name }}</a></li>
+{% endfor %}
+</ul>
 {% endblock %}

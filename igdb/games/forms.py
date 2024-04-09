@@ -51,6 +51,14 @@ class CreateNonVideoGameForm(forms.ModelForm):
                                                  ("Tabletop Games", "Tabletop Games"),
                                                  ("Other Games", "Other Games"),))
 
+    def save(self, commit=True):
+        instance = super(CreateNonVideoGameForm, self).save(commit=False)
+        if self.user:
+            instance.user = self.user
+        if commit:
+            instance.save()
+        return instance
+
     class Meta:
         model = NonVideoGame
         fields = ["user", "name", "type", "age_range", "players", "rules", "chance"]

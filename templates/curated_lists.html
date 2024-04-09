@@ -1,13 +1,13 @@
 {% extends 'base.html' %}
 
-{% block title %}Page Title{% endblock %}
+{% block title %}Curated Lists{% endblock %}
 
 {% block content %}
 This is the general curated lists page
 <br>
 <ul>
 {% for list in curated_lists %}
-    <li>{{ list }}</li>
+    <li><a href="{% url 'read_list' slug=list.slug %}">{{ list.title }}</a></li>
 {% endfor %}
 </ul>
 {% endblock %}

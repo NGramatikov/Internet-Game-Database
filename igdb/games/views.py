@@ -1,22 +1,32 @@
+from itertools import chain
 from django.urls import reverse, reverse_lazy
 from django.shortcuts import render, redirect
 from django.views.generic import View, CreateView
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.contenttypes.models import ContentType
 
-from igdb.interaction.models import Review
 from utils import get_game_object
 from igdb.games.models import VideoGame, NonVideoGame
+from igdb.interaction.models import Review, CuratedList
 from igdb.games.forms import CreateVideoGameForm, CreateNonVideoGameForm, UpdateVideoGameForm, UpdateNonVideoGameForm
 
 
 # Create your views here.
 class GamesView(View):
     def get(self, request):
-        video_games = VideoGame.objects.all()
-        non_video_games = NonVideoGame.objects.all()
-        context = {"video_games": video_games, "non_video_games": non_video_games}
+        # video_games = VideoGame.objects.all()
+        # non_video_games = NonVideoGame.objects.all()
+        all_games = list(chain(VideoGame.objects.all(), NonVideoGame.objects.all()))
 
-        return render(request, template_name="games.html", context=context, )
+        video_games = VideoGame.objects.order_by('?')[:10]
+        non_video_games = NonVideoGame.objects.order_by('?')[:10]
+        curated_lists = CuratedList.objects.order_by('?')[:10]
+        reviews = Review.objects.order_by('?')[:10]
+
+        context = {"video_games": video_games, "non_video_games": non_video_games, "all_games": all_games,
+                   "curated_lists": curated_lists, "reviews": reviews}
+
+        return render(request, template_name="games.html", context=context)
 
 
 """
@@ -80,23 +90,42 @@ class ReadGameView(View):
 
     def get(self, request, slug):
         game = get_game_object(slug)
+        game_content_type = ContentType.objects.get_for_model(game)
         ratings = game.ratings.all()
         likes = game.likes.all()
         comments = game.comments.all()
-        avg_rating = sum([el.content for el in ratings]) / len(ratings)
+
+        if ratings:
+            avg_rating = sum([el.content for el in ratings]) / len(ratings)
+        else:
+            avg_rating = 0
 
         if request.user.is_authenticated:
             is_liked = likes.filter(user=request.user).exists()
             is_rated = ratings.filter(user=request.user).exists()
-            # is_reviewed = Review.objects.filter(user=request.user, content_object=game).exists()
             rating = ratings.filter(user=request.user).first()
+            is_commented = comments.filter(user=request.user).exists()
+            is_reviewed = (Review.objects.filter(user=request.user, content_type=game_content_type,
+                                                 object_id=game.id).exists())
+
+            if is_reviewed:
+                review_slug = (Review.objects.filter(user=request.user, content_type=game_content_type,
+                                                     object_id=game.id).first().slug)
+            else:
+                review_slug = None
+
         else:
             is_liked = False
             is_rated = False
-            # is_reviewed = False
+            is_reviewed = False
+            is_commented = False
+            rating = 0
+            review_slug = None
 
         context = {"game": game, "ratings": ratings, "likes": likes, "comments": comments, "is_liked": is_liked,
-                   "is_rated": is_rated, "avg_rating": avg_rating, "rating": rating, }#"is_reviewed": is_reviewed}
+                   "is_rated": is_rated, "avg_rating": avg_rating, "rating": rating, "is_commented": is_commented,
+                   "is_reviewed": is_reviewed, "review_slug": review_slug}
+
         return render(request, template_name="games\\read_game.html", context=context)
 
 
