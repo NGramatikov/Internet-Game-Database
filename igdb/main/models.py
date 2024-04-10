@@ -18,7 +18,7 @@ class Profile(models.Model):
         auto_now=True,
     )
 
-    avatar = models.ImageField(
+    avatar = models.URLField(
         null=True,
         blank=True,
     )

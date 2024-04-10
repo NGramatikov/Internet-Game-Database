@@ -1,40 +1,199 @@
 {% extends 'base.html' %}
 
-{% block title %}Internet Game Database{% endblock %}
+{% block title %}Home{% endblock %}
 
 {% block content %}
+    <div class="container">
 
+        <!-- Search Bar -->
+        <form action="{% url 'search_results' %}" method="GET" class="mb-4">
+            <div class="input-group">
+                <input type="text" class="form-control" name="query" placeholder="Search games and users..." required>
+                <div class="input-group-append">
+                    <button class="btn btn-primary" type="submit">Search</button>
+                </div>
+            </div>
+        </form>
 
-<ul>
-{% for video_game in video_games %}
-    <li>{{ video_game }}</li>
-{% endfor %}
-</ul>
+        <!-- Video Games Carousel -->
+        <div id="videoGamesCarousel" class="carousel slide mb-4" data-ride="carousel">
+            <div class="carousel-inner bg-light shadow p-3 mb-5 rounded">
+                {% for game in video_games %}
+                    {% if forloop.counter0|divisibleby:3 %}
+                        <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                        <div class="row">
+                    {% endif %}
+                <div class="col-md-4 mb-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title text-left">{{ game.name }}</h5>
+                            {% if game.cover %}
+                                <img src="{{ game.cover }}" class="img-fluid" alt="Cover Image"
+                                     style="max-width: 100%;">
+                            {% else %}
+                                <img src="https://static.vecteezy.com/system/resources/previews/013/442/213/original/blank-dvd-case-and-disc-png.png"
+                                     class="img-fluid" alt="Default Cover Image" style="max-width: 100%;">
+                            {% endif %}
+                            <a href="{% url 'read_game' slug=game.slug %}"
+                               class="btn btn-primary btn-block">Details</a>
+                        </div>
+                    </div>
+                </div>
+                {% if forloop.last or forloop.counter0|add:1|divisibleby:3 %}
+                    </div>
+                    </div>
+                {% endif %}
+                {% endfor %}
+            </div>
+            <a class="carousel-control-prev" href="#videoGamesCarousel" role="button" data-slide="prev"
+               style="left: -150px;">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="sr-only">Previous</span>
+            </a>
+            <a class="carousel-control-next" href="#videoGamesCarousel" role="button" data-slide="next"
+               style="right: -150px;">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="sr-only">Next</span>
+            </a>
+        </div>
 
+        <!-- Non-Video Games Carousel -->
+        <div id="nonVideoGamesCarousel" class="carousel slide mb-4" data-ride="carousel">
+            <div class="carousel-inner bg-light shadow p-3 mb-5 rounded">
+                {% for game in non_video_games %}
+                    {% if forloop.counter0|divisibleby:3 %}
+                        <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                        <div class="row">
+                    {% endif %}
+                <div class="col-md-4 mb-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title text-left">{{ game.name }}</h5>
+                            {% if game.cover %}
+                                <img src="{{ game.cover }}" class="img-fluid" alt="Cover Image"
+                                     style="max-width: 100%;">
+                            {% else %}
+                                <img src="https://static.vecteezy.com/system/resources/previews/013/442/213/original/blank-dvd-case-and-disc-png.png"
+                                     class="img-fluid" alt="Default Cover Image" style="max-width: 100%;">
+                            {% endif %}
+                            <a href="{% url 'read_game' slug=game.slug %}"
+                               class="btn btn-primary btn-block">Details</a>
+                        </div>
+                    </div>
+                </div>
+                {% if forloop.last or forloop.counter0|add:1|divisibleby:3 %}
+                    </div>
+                    </div>
+                {% endif %}
+                {% endfor %}
+            </div>
+            <a class="carousel-control-prev" href="#nonVideoGamesCarousel" role="button" data-slide="prev"
+               style="left: -150px;">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="sr-only">Previous</span>
+            </a>
+            <a class="carousel-control-next" href="#nonVideoGamesCarousel" role="button" data-slide="next"
+               style="right: -150px;">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="sr-only">Next</span>
+            </a>
+        </div>
 
-This is the home page.
-Available links are:
-<ul>
-    <li><a href="{% url 'home' %}">Home</a></li>
-    <li><a href="{% url 'games' %}">games</a></li>
-    <li><a href="{% url 'reviews' %}">reviews</a></li>
-    <li><a href="{% url 'curated_lists' %}">curated lists</a></li><br>
-    
-    <li><a href="{% url 'create_game' %}">create_game</a></li>
-    <li><a href="{% url 'read_game' slug='call-of-du-1' %}">read_game</a></li>
-    <li><a href="{% url 'update_game' slug='call-of-du-1' %}">update_game</a></li><br>
-    
-    <li><a href="{% url 'create_list' %}">create_list</a></li>
-    <li><a href="{% url 'read_list' slug='user-list-1' %}">read_list</a></li>
-    <li><a href="{% url 'update_list' slug='user-list-1' %}">update_list</a></li><br>
+        <!-- Curated Lists Carousel -->
+        <div id="curatedListsCarousel" class="carousel slide mb-4" data-ride="carousel">
+            <div class="carousel-inner bg-light shadow p-3 mb-5 rounded">
+                {% for curated_list in curated_lists %}
+                    {% if forloop.counter0|divisibleby:3 %}
+                        <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                        <div class="row">
+                    {% endif %}
+                <div class="col-md-4 mb-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title text-left">{{ curated_list.title }}</h5>
+                            <a href="{% url 'read_list' slug=curated_list.slug %}"
+                               class="btn btn-primary btn-block">Details</a>
+                        </div>
+                    </div>
+                </div>
+                {% if forloop.last or forloop.counter0|add:1|divisibleby:3 %}
+                    </div>
+                    </div>
+                {% endif %}
+                {% endfor %}
+            </div>
+            <a class="carousel-control-prev" href="#curatedListsCarousel" role="button" data-slide="prev"
+               style="left: -150px;">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="sr-only">Previous</span>
+            </a>
+            <a class="carousel-control-next" href="#curatedListsCarousel" role="button" data-slide="next"
+               style="right: -150px;">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="sr-only">Next</span>
+            </a>
+        </div>
 
-    <li><a href="{% url 'read_review' slug='review-for-2' %}">read_review</a></li>
-    <li><a href="{% url 'update_review' slug='review-for-2' %}">update_review</a></li>
-    <li><a href="{% url 'sign_in' %}">sign_in</a></li><br>
-    
-    <li><a href="{% url 'create_user' %}">create_user</a></li>
-    <li><a href="{% url 'read_user' pk=1 %}">read_user</a></li>
-    <li><a href="{% url 'update_user' pk=1 %}">update_user</a></li>
-</ul>
-    
+        <!-- Reviews Carousel -->
+        <div id="reviewsCarousel" class="carousel slide mb-4" data-ride="carousel">
+            <div class="carousel-inner bg-light shadow p-3 mb-5 rounded">
+                {% for review in reviews %}
+                    {% if forloop.counter0|divisibleby:3 %}
+                        <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                        <div class="row">
+                    {% endif %}
+                <div class="col-md-4 mb-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title text-left">{{ review.title }}</h5>
+                            <a href="{% url 'read_review' slug=review.slug %}"
+                               class="btn btn-primary btn-block">Details</a>
+                        </div>
+                    </div>
+                </div>
+                {% if forloop.last or forloop.counter0|add:1|divisibleby:3 %}
+                    </div>
+                    </div>
+                {% endif %}
+                {% endfor %}
+            </div>
+            <a class="carousel-control-prev" href="#reviewsCarousel" role="button" data-slide="prev"
+               style="left: -150px;">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="sr-only">Previous</span>
+            </a>
+            <a class="carousel-control-next" href="#reviewsCarousel" role="button" data-slide="next"
+               style="right: -150px;">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="sr-only">Next</span>
+            </a>
+        </div>
+    </div>
 {% endblock %}
+
+
+{#This is the home page.#}
+{#Available links are:#}
+{#<ul>#}
+{#    <li><a href="{% url 'home' %}">Home</a></li>#}
+{#    <li><a href="{% url 'games' %}">games</a></li>#}
+{#    <li><a href="{% url 'reviews' %}">reviews</a></li>#}
+{#    <li><a href="{% url 'curated_lists' %}">curated lists</a></li><br>#}
+{##}
+{#    <li><a href="{% url 'create_game' %}">create_game</a></li>#}
+{#    <li><a href="{% url 'read_game' slug='call-of-du-1' %}">read_game</a></li>#}
+{#    <li><a href="{% url 'update_game' slug='call-of-du-1' %}">update_game</a></li><br>#}
+{##}
+{#    <li><a href="{% url 'create_list' %}">create_list</a></li>#}
+{#    <li><a href="{% url 'read_list' slug='user-list-1' %}">read_list</a></li>#}
+{#    <li><a href="{% url 'update_list' slug='user-list-1' %}">update_list</a></li><br>#}
+{##}
+{#    <li><a href="{% url 'read_review' slug='review-for-2' %}">read_review</a></li>#}
+{#    <li><a href="{% url 'update_review' slug='review-for-2' %}">update_review</a></li>#}
+{#    <li><a href="{% url 'sign_in' %}">sign_in</a></li><br>#}
+{##}
+{#    <li><a href="{% url 'create_user' %}">create_user</a></li>#}
+{#    <li><a href="{% url 'read_user' pk=1 %}">read_user</a></li>#}
+{#    <li><a href="{% url 'update_user' pk=1 %}">update_user</a></li>#}
+{#</ul>#}
+{#{% endblock %}#}

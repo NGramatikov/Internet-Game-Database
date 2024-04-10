@@ -5,7 +5,7 @@ from django.views.generic import View, CreateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.contenttypes.models import ContentType
 
-from utils import get_game_object
+from utils import get_game_object, extract_youtube_id
 from igdb.games.models import VideoGame, NonVideoGame
 from igdb.interaction.models import Review, CuratedList
 from igdb.games.forms import CreateVideoGameForm, CreateNonVideoGameForm, UpdateVideoGameForm, UpdateNonVideoGameForm
@@ -94,6 +94,17 @@ class ReadGameView(View):
         ratings = game.ratings.all()
         likes = game.likes.all()
         comments = game.comments.all()
+        reviews = game.reviews.all()
+
+        if game.trailer:
+            trailer_id = extract_youtube_id(game.trailer)
+        else:
+            trailer_id = None
+
+        if game.gameplay:
+            gameplay_id = extract_youtube_id(game.gameplay)
+        else:
+            gameplay_id = None
 
         if ratings:
             avg_rating = sum([el.content for el in ratings]) / len(ratings)
@@ -122,9 +133,10 @@ class ReadGameView(View):
             rating = 0
             review_slug = None
 
-        context = {"game": game, "ratings": ratings, "likes": likes, "comments": comments, "is_liked": is_liked,
-                   "is_rated": is_rated, "avg_rating": avg_rating, "rating": rating, "is_commented": is_commented,
-                   "is_reviewed": is_reviewed, "review_slug": review_slug}
+        context = {"game": game, "ratings": ratings, "likes": likes, "comments": comments, "reviews": reviews,
+                   "is_liked": is_liked, "is_rated": is_rated, "avg_rating": avg_rating, "rating": rating,
+                   "is_commented": is_commented, "is_reviewed": is_reviewed, "review_slug": review_slug,
+                   "trailer_id": trailer_id, "gameplay_id": gameplay_id}
 
         return render(request, template_name="games\\read_game.html", context=context)
 

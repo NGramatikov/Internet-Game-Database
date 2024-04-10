@@ -17,10 +17,11 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 
-from igdb.main.views import HomeView
+from igdb.main.views import HomeView, SearchResultsView
 
 urlpatterns = [path("admin/", admin.site.urls),
                path("", HomeView.as_view(), name="home"),
+               path("search/", SearchResultsView.as_view(), name="search_results"),
                path("", include("igdb.main.urls")),
                path("", include("igdb.interaction.urls")),
                path("", include("igdb.games.urls"))]

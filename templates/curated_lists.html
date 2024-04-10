@@ -3,11 +3,34 @@
 {% block title %}Curated Lists{% endblock %}
 
 {% block content %}
-This is the general curated lists page
-<br>
-<ul>
-{% for list in curated_lists %}
-    <li><a href="{% url 'read_list' slug=list.slug %}">{{ list.title }}</a></li>
-{% endfor %}
-</ul>
+    <div class="container">
+        <div class="row">
+            {% for list in curated_lists %}
+                <div class="col-md-4 mb-4">
+                    <div class="card shadow">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ list.title }}</h5>
+                            <p class="card-text">Added by: {{ list.user }}</p>
+                            <p class="card-text">Added on: {{ list.created_at }}</p>
+                            <p class="card-text">Description: {{ list.description|linebreaks }}</p>
+                            <a href="{% url 'read_list' slug=list.slug %}" class="btn btn-primary">View List</a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                {% if curated_lists.has_previous %}
+                    <a href="?page=1" class="btn btn-primary">First</a>
+                    <a href="?page={{ curated_lists.previous_page_number }}" class="btn btn-primary">Previous</a>
+                {% endif %}
+                <span class="current-page">Page {{ curated_lists.number }} of {{ curated_lists.paginator.num_pages }}</span>
+                {% if curated_lists.has_next %}
+                    <a href="?page={{ curated_lists.next_page_number }}" class="btn btn-primary">Next</a>
+                    <a href="?page={{ curated_lists.paginator.num_pages }}" class="btn btn-primary">Last</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
 {% endblock %}

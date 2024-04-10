@@ -1,5 +1,7 @@
 import os
+import re
 from datetime import datetime
+
 
 import django
 from django.contrib.auth import get_user_model
@@ -140,11 +142,36 @@ for model in inter_models:
 # comment = Comment.objects.get(id=1)
 # print(comment.content_object.slug)
 
-game1 = VideoGame.objects.get(slug="call-of-du-3")
-user1 = User.objects.get(id=1)
-for like in game1.likes.all():
-    if like.user == user1:
-        print("Yes")
+# game1 = VideoGame.objects.get(slug="call-of-du-3")
+# user1 = User.objects.get(id=1)
+# for like in game1.likes.all():
+#     if like.user == user1:
+#         print("Yes")
+#
+# rating = Rating.objects.all().filter(user=User.objects.get(id=1)).first()
+# print(rating.content)
 
-rating = Rating.objects.all().filter(user=User.objects.get(id=1)).first()
-print(rating.content)
+
+def extract_youtube_id(url):
+    pattern = r"(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|\S*?[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})"
+    match = re.search(pattern, url)
+
+    if match:
+        return match.group(1)
+    else:
+        return None
+
+
+game = VideoGame.objects.get(id=1)
+# print(len(game.likes.all()))
+# print(len(game.comments.all()))
+# print(len(game.reviews.all()))
+
+user1 = Profile.objects.all().first()
+
+profile.user.review_set.all()
+profile.user.comment_set.all()
+profile.user.rating_set.all()
+profile.user.like_set.all()
+profile.user.videogame_set.all()
+profile.user.nonvideogame_set.all()

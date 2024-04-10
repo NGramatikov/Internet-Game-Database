@@ -1,0 +1,20 @@
+body {
+    background-color: #f2f2f2; /* Light grey background for the entire site */
+}
+
+.white-div {
+    background-color: #ffffff; /* White background for specific divs */
+    /* Add additional styling for these divs as needed */
+}
+
+#custom_form {
+    background-color: #e7f1f7; /* Light blue background color */
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1); /* Shadow effect */
+}
+
+.carousel-control-next,
+.carousel-control-prev /*, .carousel-indicators */ {
+    filter: invert(100%);
+}

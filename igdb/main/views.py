@@ -24,6 +24,18 @@ class HomeView(View):
         return render(request, template_name="home.html", context=context)
 
 
+class SearchResultsView(View):
+    def get(self, request):
+        query = request.GET.get('query')
+        video_games = VideoGame.objects.filter(name__icontains=query)
+        non_video_games = NonVideoGame.objects.filter(name__icontains=query)
+        users = user_model.objects.filter(username__icontains=query)
+        context = {"query": query, "video_games": video_games, "non_video_games": non_video_games, "users": users}
+        print(context)
+
+        return render(request, template_name="search_results.html", context=context)
+
+
 def sign_in(request):
     if request.method == "POST":
         if request.user.is_authenticated:
@@ -85,7 +97,18 @@ class ReadUserView(View):
 
     def get(self, request, pk):
         user = get_object_or_404(Profile, id=pk)
-        return render(request, template_name="main\\read_user.html", context={"user": user})
+
+        reviews = user.user.review_set.all()
+        comments = user.user.comment_set.all()
+        ratings = user.user.rating_set.all()
+        likes = user.user.like_set.all()
+        video_games = user.user.videogame_set.all()
+        non_video_games = user.user.nonvideogame_set.all()
+
+        context = {"user": user, "reviews": reviews, "comments": comments, "ratings": ratings, "likes": likes,
+                   "video_games": video_games, "non_video_games": non_video_games}
+
+        return render(request, template_name="main\\read_user.html", context=context)
 
 
 class UpdateUserView(LoginRequiredMixin, View):

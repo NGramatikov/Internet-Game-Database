@@ -3,12 +3,20 @@
 {% block title %}Read review{% endblock %}
 
 {% block content %}
-This is the Read Review page<br>
-Title: {{ review.title }}<br>
-Review: {{ review.content }}<br>
-Added by: {{ review.user.username }}<br>
-Added on: {{ review.created_at }}<br>
-{% if user == review.user %}
-    <button id="review_button" onclick="window.location.href='{% url 'update_review' slug=review.slug %}';">Edit Review</button>
-{% endif %}
+    <div class="container">
+        <h2 class="text-center">Read Review</h2>
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Title: {{ review.title }}</h5>
+                <p class="card-text">Review: {{ review.content|linebreaks }}</p>
+                <p class="card-text">Added by: {{ review.user.username }}</p>
+                <p class="card-text">Added on: {{ review.created_at }}</p>
+                {% if user == review.user %}
+                    <button class="btn btn-primary" id="review_button"
+                            onclick="window.location.href='{% url 'update_review' slug=review.slug %}';">Edit Review
+                    </button>
+                {% endif %}
+            </div>
+        </div>
+    </div>
 {% endblock %}

@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% block title %}Search Results{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <h2>Search Results for "{{ query }}"</h2>
+
+        {% if video_games %}
+            <h3>Video Games</h3>
+            <ul>
+                {% for video_game in video_games %}
+                    <li>
+                        <a href="{% url 'read_game' slug=video_game.slug %}">{{ video_game.name }}</a>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+
+        {% if non_video_games %}
+            <h3>Other Games</h3>
+            <ul>
+                {% for non_video_game in non_video_games %}
+                    <li>
+                        <a href="{% url 'read_game' slug=non_video_game.slug %}">{{ non_video_game.name }}</a>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+
+        {% if users %}
+            <h3>Users</h3>
+            <ul>
+                {% for user in users %}
+                    <li>
+                        <a href="{% url 'read_user' pk=user.id %}">{{ user.username }}</a>
+                    </li>
+                {% endfor %}</ul>
+        {% endif %}
+    </div>
+{% endblock %}

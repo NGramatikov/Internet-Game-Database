@@ -3,8 +3,40 @@
 {% block title %}Create game{% endblock %}
 
 {% block content %}
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Choose Form</title>
+    <div class="container">
+        <h2 class="text-center">Choose Form</h2>
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <select id="form_selector" class="form-control mb-3" onchange="showSelectedForm()">
+                    <option value="video_game">Video Game Form</option>
+                    <option value="non_video_game">Non-Video Game Form</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <form method="post" id="video_game_form" style="display: none;">
+                    <!-- Video Game Form Content -->
+                    {% csrf_token %}
+                    {{ video_game_form.as_p }}
+                    <button type="submit" class="btn btn-primary">Submit Video Game</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <form method="post" id="non_video_game_form" style="display: none;">
+                    <!-- Non-Video Game Form Content -->
+                    {% csrf_token %}
+                    {{ non_video_game_form.as_p }}
+                    <button type="submit" class="btn btn-primary">Submit Non-Video Game</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <script>
         function showSelectedForm() {
             var selectedValue = document.getElementById('form_selector').value;
@@ -15,24 +47,4 @@
         // Call the showSelectedForm function when the page loads
         window.onload = showSelectedForm;
     </script>
-</head>
-<body>
-    <select id="form_selector" onchange="showSelectedForm()">
-        <option value="video_game">Video Game Form</option>
-        <option value="non_video_game">Non-Video Game Form</option>
-    </select>
-
-    <form method="post" id="video_game_form" style="display: none;">
-        <!-- Video Game Form Content -->
-        {% csrf_token %}
-        {{ video_game_form.as_p }}
-        <button type="submit">Submit Video Game</button>
-    </form>
-
-    <form method="post" id="non_video_game_form" style="display: none;">
-        <!-- Non-Video Game Form Content -->
-        {% csrf_token %}
-        {{ non_video_game_form.as_p }}
-        <button type="submit">Submit Non-Video Game</button>
-    </form>
 {% endblock %}

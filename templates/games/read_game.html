@@ -1,131 +1,124 @@
 {% extends 'base.html' %}
-
+{% load static %}
 {% block title %}Read game{% endblock %}
 
 {% block content %}
-This is the Read Game page<br><br>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <h2>{{ game.name }}</h2>
+            </div>
+        </div>
+        <div class="row">
+            {% if game.cover %}
+                <div class="col-md-4">
+                    <img src="{{ game.cover }}" class="img-fluid" alt="Cover Image">
+                </div>
+            {% else %}
+                <div class="col-md-4">
+                    <img src="https://static.vecteezy.com/system/resources/previews/013/442/213/original/blank-dvd-case-and-disc-png.png"
+                         class="img-fluid" alt="Default Cover Image">
+                </div>
+            {% endif %}
+            {% if game.trailer %}
+                <div class="col-md-4">
+                    <iframe width="100%" height="200" src="https://www.youtube.com/embed/{{ trailer_id }}"
+                            frameborder="0"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            allowfullscreen></iframe>
+                </div>
+            {% endif %}
+            {% if game.gameplay %}
+                <div class="col-md-4">
+                    <iframe width="100%" height="200" src="https://www.youtube.com/embed/{{ gameplay_id }}"
+                            frameborder="0"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            allowfullscreen></iframe>
+                </div>
+            {% endif %}
+        </div>
 
-These are the common fields:<br>
+        <div class="container">
+            <div class="row">
+            </div>
+            <div class="row">
+                <div class="col-md-8">
+                    <!-- Game Details Card -->
+                    <div class="card shadow p-3 mb-5 bg-white rounded">
+                        <div class="card-body">
+                            <p>Added by: {{ game.user.username }}</p>
+                            {% if game.description %}
+                                <p>Description: {{ game.description }}</p>
+                            {% endif %}
+                            {% if game.genre %}
+                                <p>Genre: {{ game.genre }}</p>
+                            {% endif %}
+                            <p>Age Rating: {{ game.age_range }}+</p>
+                            {% if game.type == "Video Games" %}
+                                <p>Release Year: {{ game.release_year }}</p>
+                                <p>Developer: {{ game.developer }}</p>
+                                <p>Publisher: {{ game.publisher }}</p>
+                                {% if game.system_requirements %}
+                                    <p>System Requirements: {{ game.system_requirements }}</p>
+                                {% endif %}
+                            {% else %}
+                                <p>Players: {{ game.players }}</p>
+                                <p>Rules: {{ game.rules }}</p>
+                                {% if game.setup_time %}
+                                    <p>Setup Time: {{ game.setup_time|time:"H:i" }}</p>
+                                {% endif %}
+                                {% if game.playtime %}
+                                    <p>Playtime: {{ game.playtime|time:"H:i" }}</p>
+                                {% endif %}
+                                <p>Chance: {{ game.chance }}</p>
+                                {% if game.skills %}
+                                    <p>Skills: {{ game.skills }}</p>
+                                {% endif %}
+                            {% endif %}
+                            <p>Average rating: {{ avg_rating }}</p>
+                            <p>Total likes: {{ likes|length }}</p>
+                            <p>Total comments: {{ comments|length }}</p>
+                            <p>Total reviews: {{ reviews|length }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-Name: {{ game.name }}<br>
-Added by: {{ game.user.username }}<br>
+            <div class="row">
+                <div class="col-md-6">
+                    <h3>Reviews</h3>
+                    <ul class="list-group">
+                        {% for review in game.reviews.all %}
+                            <li class="list-group-item mb-3">
+                                <p>{{ review.content }}</p>
+                                <p class="small text-muted">Added by: {{ review.user.username }}<br>
+                                    Added on: {{ review.created_at }}</p>
+                                {% if review.user == user %}
+                                    <a href="{% url 'update_review' slug=review.slug %}"
+                                       class="btn btn-sm btn-primary">Edit Review</a>
+                                {% endif %}
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
 
-{% if game.description %}
-Description: {{ game.description }}<br>
-{% endif %}
-
-{% if game.genre %}
-Genre: {{ game.genre }}<br>
-{% endif %}
-
-Age Rating: {{ game.age_range }}+<br>
-
-{% if game.cover %}
-Cover: {{ game.cover }}<br>
-{% endif %}<br>
-
-These are the fields, specific to the game type:<br>
-{% if game.type == "Video Games" %}
-    Release Year: {{ game.release_year }}<br>
-    
-    {% if game.trailer %}
-        Trailer: {{ game.trailer }}<br>
-    {% endif %}
-        
-    {% if game.gameplay %}
-        Gameplay: {{ game.gameplay }}<br>
-    {% endif %}
-    
-    Developer: {{ game.developer }}<br>
-    
-    Publisher: {{ game.publisher }}<br>
-    
-    {% if game.system_requirements %}
-        System Requirements: {{ game.system_requirements }}<br>
-    {% endif %}
-
-{% else %}
-    Players: {{ game.players }}<br>
-    
-    Rules: {{ game.rules }}<br>
-    
-    {% if game.setup_time%}
-        Setup Time: {{ game.setup_time|time:"H:i" }}<br>
-    {% endif %}
-    
-    {% if game.playtime %}
-        Playtime: {{ game.playtime|time:"H:i" }}<br>
-    {% endif %}
-    
-    Chance: {{ game.chance }}<br>
-    
-    {% if game.skills %}
-        Skills: {{ game.skills }}<br>
-    {% endif %}
-{% endif %}<br>
-
-{% if not user.is_authenticated %}
-    <button id="like_button" onclick="window.location.href='{% url 'sign_in' %}';">Like</button>
-{% elif user.is_authenticated and not is_liked %}
-    <form action="{% url 'create_like' slug=game.slug %}" method="post" class="like-form">
-    {% csrf_token %}
-    <button type="submit">Like</button>
-    </form>
-{% elif user.is_authenticated and is_liked %}
-    <form action="{% url 'delete_like' slug=game.slug %}" method="post" class="like-form">
-    {% csrf_token %}
-    <button type="submit">Dislike</button>
-    </form>
-{% endif %}
-
-
-{% if not user.is_authenticated %}
-    <button id="comment_button" onclick="window.location.href='{% url 'sign_in' %}';">Comment</button>
-{% elif user.is_authenticated%}
-    <button id="comment_button" onclick="window.location.href='{% url 'create_comment' slug=game.slug %}';">Comment</button>
-{% endif %}
-
-{% if not user.is_authenticated %}
-    <button id="rate_button" onclick="window.location.href='{% url 'sign_in' %}';">Rate</button>
-{% elif user.is_authenticated and not is_rated %}
-    <button id="rate_button" onclick="window.location.href='{% url 'create_rating' slug=game.slug %}';">Rate</button>
-{% elif user.is_authenticated and is_rated %}
-    <button id="rate_button" onclick="window.location.href='{% url 'update_rating' pk=rating.id %}';">Your rating: {{ rating.content }}/10</button>
-{% endif %}
-
-{% if not user.is_authenticated %}
-    <button id="review_button" onclick="window.location.href='{% url 'sign_in' %}';">Review</button><br>
-{% elif user.is_authenticated and not is_reviewed %}
-<button id="review_button" onclick="window.location.href='{% url 'create_review' slug=game.slug %}';">Review</button><br>
-{% elif user.is_authenticated and is_reviewed %}
-    <button id="review_button" onclick="window.location.href='{% url 'update_review' slug=review_slug %}';">Your Review</button>
-{% endif %}
-
-<br>
-Likes: {{ game.likes.all | length }}<br>
-Average Rating: {{ avg_rating }}<br>
-
-Reviews:
-<ul>
-{% for review in game.reviews.all %}
-    <li><a href="{% url 'read_review' slug=review.slug %}">{{ review.title }}</a></li>
-{% endfor %}
-</ul>
-
-Comments:<br>
-<ul>
-{% for comment in game.comments.all %}
-    <li>
-    {{ comment.content }}<br>
-    Added by: {{ comment.user.username }}<br>
-    Added on: {{ comment.created_at }}<br>
-    {% if is_commented %}
-    <button id="eddit_comment_button" onclick="window.location.href='{% url 'update_comment' pk=comment.id %}';">Edit Comment</button>
-    {% endif %}
-    </li>
-</ul>
-{% endfor %}
-    
-
-
+                <div class="col-md-6">
+                    <h3>Comments</h3>
+                    <ul class="list-group">
+                        {% for comment in game.comments.all %}
+                            <li class="list-group-item mb-3">
+                                <p>{{ comment.content|linebreaks }}</p>
+                                <p class="small text-muted">Added by: {{ comment.user.username }}<br>
+                                    Added on: {{ comment.created_at }}</p>
+                                {% if comment.user == user %}
+                                    <a href="{% url 'update_comment' pk=comment.id %}"
+                                       class="btn btn-sm btn-primary">Edit Comment</a>
+                                {% endif %}
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}

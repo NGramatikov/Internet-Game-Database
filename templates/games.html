@@ -1,89 +1,91 @@
-{#{% extends 'base.html' %}#}
-{##}
-{#{% block title %}Page Title{% endblock %}#}
-{##}
-{#{% block content %}#}
-{#This is the generic Game view page#}
-{##}
-{##}
-{#<ul>#}
-{#{% for game in all_games %}#}
-{#    <li><a href="{% url 'read_game' slug=game.slug %}">{{ game.name }}</a></li>#}
-{#{% endfor %}#}
-{#</ul>#}
-{##}
-{#{% endblock %}#}
-
-
 {% extends 'base.html' %}
-{% block title %}Home{% endblock %}
+
+{% block title %}Page Title{% endblock %}
 
 {% block content %}
-<div class="container">
-    <!-- Video Games Carousel -->
-    <div id="video-games-carousel" class="carousel slide mb-4" data-ride="carousel">
-        <div class="carousel-inner">
-            {% for video_game in video_games %}
-            <div class="carousel-item {% if forloop.first %}active{% endif %}">
-                <img src="{{ video_game.cover }}" class="d-block w-100" alt="No cover">
-                <div class="carousel-caption d-none d-md-block">
-                    <h5>{{ video_game.name }}</h5>
-                    <p>{{ video_game.description }}</p>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6">
+                <h2>Video Games</h2>
+                <div class="card-columns">
+                    {% for video_game in video_games %}
+                        <div class="card">
+                            <div class="row no-gutters">
+                                <div class="col-md-8">
+                                    <div class="card-body">
+                                        <h5 class="card-title">{{ video_game.name }}</h5>
+                                        <p class="card-text">Platform: {{ video_game.platform }}</p>
+                                        <a href="{% url 'read_game' slug=video_game.slug %}" class="btn btn-primary">Read
+                                            More</a>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    {% if video_game.cover %}
+                                        <img src="{{ video_game.cover }}" class="card-img" alt="{{ video_game.name }}">
+                                    {% else %}
+                                        <img src="https://static.vecteezy.com/system/resources/previews/013/442/213/original/blank-dvd-case-and-disc-png.png"
+                                             class="img-fluid" alt="Default Cover Image">
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
                 </div>
             </div>
-            {% endfor %}
-        </div>
-        <a class="carousel-control-prev" href="#video-games-carousel" role="button" data-slide="prev">
-            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-            <span class="sr-only">Previous</span>
-        </a>
-        <a class="carousel-control-next" href="#video-games-carousel" role="button" data-slide="next">
-            <span class="carousel-control-next-icon" aria-hidden="true"></span>
-            <span class="sr-only">Next</span>
-        </a>
-    </div>
-    
-    <!-- Non Video Games -->
-    <div class="row mb-4">
-        {% for non_video_game in non_video_games %}
-        <div class="col-md-3">
-            <div class="card">
-                <img src="{{ non_video_game.cover }}" class="card-img-top" alt="...">
-                <div class="card-body">
-                    <h5 class="card-title">{{ non_video_game.name }}</h5>
-                    <p class="card-text">{{ non_video_game.description }}</p>
-                </div>
-            </div>
-        </div>
-        {% endfor %}
-    </div>
-
-    <!-- Curated Lists -->
-    <div class="row mb-4">
-        {% for curated_list in curated_lists %}
-        <div class="col-md-3">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title"><a href="{% url 'read_list' slug=curated_list.slug %}">{{ curated_list.title }}</a></h5>
-                    <p class="card-text">{{ curated_list.description }}</p>
-                </div>
-            </div>
-        </div>
-        {% endfor %}
-    </div>
-
-    <!-- Reviews -->
-    <div class="row mb-4">
-        {% for review in reviews %}
-        <div class="col-md-3">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">{{ review.title }}</h5>
-                    <p class="card-text">{{ review.content }}</p>
+            <div class="col-md-6">
+                <h2>Non-Video Games</h2>
+                <div class="card-columns">
+                    {% for non_video_game in non_video_games %}
+                        <div class="card">
+                            <div class="row no-gutters">
+                                <div class="col-md-8">
+                                    <div class="card-body">
+                                        <h5 class="card-title">{{ non_video_game.name }}</h5>
+                                        <p class="card-text">Type: {{ non_video_game.type }}</p>
+                                        <a href="{% url 'read_game' slug=non_video_game.slug %}"
+                                           class="btn btn-primary">Read More</a>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    {% if non_video_game.cover %}
+                                        <img src="{{ non_video_game.cover }}" class="card-img"
+                                             alt="{{ non_video_game.name }}">
+                                    {% else %}
+                                        <img src="https://static.vecteezy.com/system/resources/previews/013/442/213/original/blank-dvd-case-and-disc-png.png"
+                                             class="img-fluid" alt="Default Cover Image">
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
                 </div>
             </div>
         </div>
-        {% endfor %}
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                {% if video_games.has_previous %}
+                    <a href="?video_games_page=1" class="btn btn-primary">First</a>
+                    <a href="?video_games_page={{ video_games.previous_page_number }}"
+                       class="btn btn-primary">Previous</a>
+                {% endif %}
+                <span class="current-page">Page {{ video_games.number }} of {{ video_games.paginator.num_pages }}</span>
+                {% if video_games.has_next %}
+                    <a href="?video_games_page={{ video_games.next_page_number }}" class="btn btn-primary">Next</a>
+                    <a href="?video_games_page={{ video_games.paginator.num_pages }}" class="btn btn-primary">Last</a>
+                {% endif %}
+            </div>
+            <div class="col-md-6">
+                {% if non_video_games.has_previous %}
+                    <a href="?non_video_games_page=1" class="btn btn-primary">First</a>
+                    <a href="?non_video_games_page={{ non_video_games.previous_page_number }}" class="btn btn-primary">Previous</a>
+                {% endif %}
+                <span class="current-page">Page {{ non_video_games.number }} of {{ non_video_games.paginator.num_pages }}</span>
+                {% if non_video_games.has_next %}
+                    <a href="?non_video_games_page={{ non_video_games.next_page_number }}"
+                       class="btn btn-primary">Next</a>
+                    <a href="?non_video_games_page={{ non_video_games.paginator.num_pages }}" class="btn btn-primary">Last</a>
+                {% endif %}
+            </div>
+        </div>
     </div>
-</div>
 {% endblock %}

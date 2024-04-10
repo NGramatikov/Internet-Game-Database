@@ -3,35 +3,123 @@
 {% block title %}Read user{% endblock %}
 
 {% block content %}
-This is the profile page<br>
-The profile {{ user.user.username }} was created on {{ user.user.date_joined }}<br>
 
-User: {{ user.user.username }}<br>
-Email: {{ user.user.email }}<br>
-Joined on: {{ user.user.date_joined }}<br>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-8">
+                <div class="card shadow">
+                    <div class="card-body">
+                        <h5 class="card-title">User Details</h5>
+                        <p>User: {{ user.user.username }}</p>
+                        <p>Email: {{ user.user.email }}</p>
+                        <p>Joined on: {{ user.user.date_joined }}</p>
+                        {% if user.first_name %}
+                            <p>First name: {{ user.user.first_name }}</p>
+                        {% endif %}
+                        {% if user.last_name %}
+                            <p>Last name: {{ user.user.last_name }}</p>
+                        {% endif %}
+                        {% if user.description %}
+                            <p>Description: {{ user.description|linebreaks }}</p>
+                        {% endif %}
+                        {% if user.country %}
+                            <p>Country: {{ user.country }}</p>
+                        {% endif %}
+                        {% if user.birthdate %}
+                            <p>Birthdate: {{ user.birthdate }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
 
-{% if user.first_name %}
-First name: {{ user.user.first_name }}<br>
-{% endif %}
+            <div class="col-md-4">
+                <div class="card shadow">
+                    <div class="card-body">
+                        <h5 class="card-title">User Avatar</h5>
+                        {% if user.avatar %}
+                            <img src="{{ user.avatar }}" class="img-fluid" alt="Avatar">
+                        {% else %}
+                            <img src="https://png.pngtree.com/png-vector/20220608/ourmid/pngtree-man-avatar-isolated-on-white-background-png-image_4891418.png"
+                                 class="img-fluid" alt="Default Avatar">
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
 
-{% if user.last_name %}
-Last name: {{ user.user.last_name }}<br>
-{% endif %}
+        <div class="row mt-4">
+            <div class="col-md-6">
+                <div class="card shadow">
+                    <div class="card-body">
+                        <h5 class="card-title">Reviews</h5>
+                        <ul>
+                            {% for review in reviews %}
+                                <li><a href="{% url 'update_review' slug=review.slug %}">Review
+                                    for {{ review.content_object.name }}</a></li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
 
-{% if user.avatar %}
-Avatar: {{ user.avatar }}<br>
-{% endif %}
+            <div class="col-md-6">
+                <div class="card shadow">
+                    <div class="card-body">
+                        <h5 class="card-title">Comments</h5>
+                        <ul>
+                            {% for comment in comments %}
+                                <li><a href="{% url 'update_comment' pk=comment.id %}">Comment
+                                    for {{ comment.content_object.name }}</a></li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-{% if user.description %}
-Description: {{ user.description }}<br>
-{% endif %}
+        <div class="row mt-4">
+            <div class="col-md-6">
+                <div class="card shadow">
+                    <div class="card-body">
+                        <h5 class="card-title">Ratings</h5>
+                        <ul>
+                            {% for rating in ratings %}
+                                <li><a href="{% url 'update_rating' pk=rating.id %}">Rating
+                                    for {{ rating.content_object.name }}</a></li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
 
-{% if user.country %}
-Country: {{ user.country }}<br>
-{% endif %}
+            <div class="col-md-6">
+                <div class="card shadow">
+                    <div class="card-body">
+                        <h5 class="card-title">Video Games</h5>
+                        <ul>
+                            {% for game in video_games %}
+                                <li><a href="{% url 'update_game' slug=game.slug %}">{{ game.name }}</a></li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-{% if user.birthdate %}
-Birthdate: {{ user.birthdate }}<br>
-{% endif %}
+        <div class="row mt-4">
+            <div class="col-md-6">
+                <div class="card shadow">
+                    <div class="card-body">
+                        <h5 class="card-title">Non-Video Games</h5>
+                        <ul>
+                            {% for game in non_video_games %}
+                                <li><a href="{% url 'update_game' slug=game.slug %}">{{ game.name }}</a></li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
 {% endblock %}

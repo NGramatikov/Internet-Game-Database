@@ -3,11 +3,19 @@
 {% block title %}Reviews{% endblock %}
 
 {% block content %}
-This is the general reviews page
-<br>
-<ul>
-{% for review in reviews %}
-    <li><a href="{% url 'read_review' slug=review.slug %}">{{ review.title }}</a></li>
-{% endfor %}
-</ul>
+    <div class="container">
+        <div class="card-columns">
+            {% for review in reviews %}
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ review.title }}</h5>
+                        <p class="card-text">For game: {{ review.content_object.name }}</p>
+                        <p class="card-text">Added by: {{ review.user.username }}</p>
+                        <p class="card-text">Added on: {{ review.created_at }}</p>
+                        <a href="{% url 'read_review' slug=review.slug %}" class="btn btn-primary">Read Review</a>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
 {% endblock %}

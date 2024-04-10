@@ -3,15 +3,40 @@
 {% block title %}Read list{% endblock %}
 
 {% block content %}
-This is the Read a Curated List page<br>
-    
-Title: {{ curated_list.title }}<br>
-Created by: {{ curated_list.user.username }}<br>
-Added on: {{ curated_list.created_at }}<br>
-Games:<br>
-<ul>
-{% for game in list_items %}
-    <li><a href="{% url 'read_game' slug=game.slug %}">{{ game.name }}</a></li>
-{% endfor %}
-</ul>
+    <div class="container">
+        <h2 class="text-center">Read a Curated List</h2>
+        <div class="row">
+            <div class="col-md-6">
+                <p>Title: {{ curated_list.title }}</p>
+                <p>Description: {{ curated_list.description }}</p>
+                <p>Created by: {{ curated_list.user.username }}</p>
+                <p>Added on: {{ curated_list.created_at }}</p>
+                <p>Games:</p>
+                <div class="container">
+                    <div class="row">
+                        {% for game in list_items %}
+                            <div class="col-md-12 {% cycle 'bg-light' '' %}">
+                                <div class="row">
+                                    <div class="col-md-10 order-md-2">
+                                        <p>{{ forloop.counter }}. Title: <a
+                                                href="{% url 'read_game' slug=game.slug %}">{{ game.name }}</a>
+                                        </p>
+                                    </div>
+                                    <div class="col-md-2 order-md-1">
+                                        {% if game.cover %}
+                                            <img src="{{ game.cover }}" class="img-fluid" alt="Cover Image"
+                                                 style="max-width: 100%;">
+                                        {% else %}
+                                            <img src="https://static.vecteezy.com/system/resources/previews/013/442/213/original/blank-dvd-case-and-disc-png.png"
+                                                 class="img-fluid" alt="Default Cover Image" style="max-width: 100%;">
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}

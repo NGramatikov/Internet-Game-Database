@@ -3,11 +3,18 @@
 {% block title %}Create list{% endblock %}
 
 {% block content %}
-This is the Create a Curated List page
-
-<form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Create</button>
-    </form>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <h2 class="text-center">Create a Curated List</h2>
+                <form method="post" id="custom_form">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <div class="text-center">
+                        <button type="submit" class="btn btn-primary">Create</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 {% endblock %}
